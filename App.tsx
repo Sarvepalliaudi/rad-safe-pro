@@ -1,26 +1,50 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Menu, ChevronLeft } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import LearningContent from './components/LearningContent';
 import DoseCalculator from './components/DoseCalculator';
 import AIDosePredictor from './components/AIDosePredictor';
+import AIImageGenerator from './components/AIImageGenerator';
 import Quiz from './components/Quiz';
 import Spotters from './components/Spotters';
 import StartScreen from './components/StartScreen';
 import Dashboard from './components/Dashboard';
 import Downloads from './components/Downloads';
 import Guide from './components/Guide';
+import AboutProject from './components/AboutProject';
+import AuthScreen from './components/AuthScreen';
 import { CONTENT_SECTIONS, QUIZ_QUESTIONS } from './constants';
 import { ViewState } from './types';
+import { getCurrentSession } from './services/authService';
 
 const App: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>('START');
   const [activeSectionId, setActiveSectionId] = useState<string>('intro');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    const session = getCurrentSession();
+    if (session) {
+      setViewState('DASHBOARD');
+    }
+  }, []);
+
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  const handleStart = () => setViewState('DASHBOARD');
+  const handleStart = () => {
+    const session = getCurrentSession();
+    setViewState(session ? 'DASHBOARD' : 'AUTH');
+  };
+
+  const handleAuthSuccess = () => {
+    setViewState('DASHBOARD');
+  };
+
+  const handleLogout = () => {
+    setViewState('START');
+    setIsSidebarOpen(false);
+  };
 
   const handleNavigate = (id: string) => {
     setActiveSectionId(id);
@@ -35,10 +59,12 @@ const App: React.FC = () => {
     switch (activeSectionId) {
       case 'calculator': return <DoseCalculator />;
       case 'ai-predict': return <AIDosePredictor />;
+      case 'image-gen': return <AIImageGenerator />; 
       case 'quiz': return <Quiz allQuestions={QUIZ_QUESTIONS} onExit={handleBackToDashboard} />;
       case 'spotters': return <Spotters />;
       case 'downloads': return <Downloads />;
       case 'guide': return <Guide />;
+      case 'about': return <AboutProject />;
       default:
         const section = CONTENT_SECTIONS.find(s => s.id === activeSectionId);
         return section ? <LearningContent section={section} /> : <div>Section not found</div>;
@@ -49,10 +75,12 @@ const App: React.FC = () => {
     return <StartScreen onStart={handleStart} />;
   }
 
-  // Mobile layout wrapper
+  if (viewState === 'AUTH') {
+    return <AuthScreen onAuthSuccess={handleAuthSuccess} onBack={() => setViewState('START')} />;
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans">
-      {/* Sidebar is only visible on Desktop or when toggled */}
       <div className="hidden md:block">
         <Sidebar 
           sections={CONTENT_SECTIONS}
@@ -60,10 +88,10 @@ const App: React.FC = () => {
           onSelectSection={handleNavigate}
           isOpen={true}
           toggleSidebar={() => {}}
+          onLogout={handleLogout}
         />
       </div>
       
-      {/* Mobile Sidebar Overlay */}
       <div className="md:hidden">
          <Sidebar 
           sections={CONTENT_SECTIONS}
@@ -71,11 +99,11 @@ const App: React.FC = () => {
           onSelectSection={(id) => { handleNavigate(id); setIsSidebarOpen(false); }}
           isOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
+          onLogout={handleLogout}
         />
       </div>
 
       <div className="flex-1 md:ml-64 flex flex-col min-w-0 transition-all duration-300">
-        {/* Header */}
         <div className="bg-white p-4 flex items-center justify-between border-b border-gray-200 sticky top-0 z-20 shadow-sm">
            <div className="flex items-center gap-2">
              {viewState === 'SECTION' && (
@@ -91,10 +119,9 @@ const App: React.FC = () => {
           </button>
         </div>
 
-        {/* Main Content Area */}
         <main className="p-4 md:p-8 max-w-6xl mx-auto w-full animate-fade-in flex-1">
           {viewState === 'DASHBOARD' ? (
-            <Dashboard onNavigate={handleNavigate} sections={CONTENT_SECTIONS} />
+            <Dashboard onNavigate={handleNavigate} sections={CONTENT_SECTIONS} onLogout={handleLogout} />
           ) : (
             renderContent()
           )}
@@ -102,7 +129,7 @@ const App: React.FC = () => {
 
         {viewState === 'DASHBOARD' && (
            <footer className="py-6 text-center text-xs text-slate-400 border-t border-gray-200 bg-white">
-            <p>© {new Date().getFullYear()} RAD SAFE PRO. Version 1.0.0</p>
+            <p>© {new Date().getFullYear()} RAD SAFE PRO. Version 3.0.0 (Pro)</p>
           </footer>
         )}
       </div>

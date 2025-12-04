@@ -4,7 +4,7 @@ import { Section, QuizQuestion } from './types';
 export const APP_METADATA = {
   title: "RAD SAFE PRO",
   subtitle: "Your Smart Radiology Learning & Safety Assistant",
-  version: "2.0.0",
+  version: "3.0.0 (Pro)",
   downloads: [
     { label: "Download RAD SAFE PRO – Android APK", url: "https://example.com/radsafe.apk", icon: "Smartphone" },
     { label: "Download RAD SAFE PRO – Windows EXE", url: "https://example.com/radsafe.exe", icon: "Monitor" },
@@ -123,173 +123,149 @@ export const CONTENT_SECTIONS: Section[] = [
     icon: 'HeartHandshake',
     subsections: [
       {
-        title: 'What is Radiation?',
-        body: 'Radiation is energy that travels as waves or particles. It is part of our natural world.\n\n**Natural Sources:**\n• The Sun (Cosmic radiation)\n• The Earth (Radon gas in soil)\n• Food (Bananas contain Potassium-40!)\n\n**Medical Radiation:**\nDoctors use X-rays to see inside your body. The amount used is very small and carefully controlled.'
+        title: 'Radiation in Daily Life',
+        body: 'You might be surprised to learn that radiation is a natural part of our world. It is not just in hospitals.\n\n**The Banana Analogy:**\nDid you know bananas contain Potassium-40, a radioactive isotope? Eating one banana exposes you to about **0.1 micro-Sieverts (µSv)** of radiation. This is completely harmless!\n\n**Flight Analogy:**\nA flight from New York to London exposes passengers to about **80 µSv** of cosmic radiation from space. This is roughly the same dose as a standard Chest X-ray.\n\n$$ \\text{1 Chest X-Ray} \\approx \\text{1 Transatlantic Flight} \\approx \\text{800 Bananas} $$\n\n**Conclusion:**\nThe small amounts of radiation used in X-rays are comparable to risks we accept in everyday life.'
       },
       {
-        title: 'Is Medical Imaging Safe?',
-        body: '**Benefit vs. Risk:**\nThe risk of not finding a serious illness (like pneumonia or a fracture) is usually much higher than the tiny risk from an X-ray.\n\n**Comparison:**\n• A Chest X-ray = ~3 days of natural background radiation (the radiation you get just by living on Earth).\n• A CT Scan = ~1-3 years of natural radiation.\n\nDoctors follow the **ALARA** principle: As Low As Reasonably Achievable. We only use radiation when necessary.'
+        title: 'X-ray Myths vs. Facts',
+        body: '**Myth 1: "I will be radioactive after an X-ray."**\n**Fact:** FALSE. X-rays are like light bulbs. When the switch is off, the light (radiation) is gone. You are **not** radioactive and can safely hug your children immediately.\n\n**Myth 2: "Lead aprons are 100% impenetrable."**\n**Fact:** Lead aprons drastically reduce exposure (by ~90-95%) but do not block 100%. This is why we also use distance and time to keep you safe.\n\n**Myth 3: "I will set off metal detectors at the airport."**\n**Fact:** No. Medical radiation does not linger in your body. Only nuclear medicine (which involves injections) might trigger sensitive detectors for a short time.'
       },
       {
-        title: 'Myths vs Facts',
-        body: '**Myth:** X-rays make me radioactive.\n**Fact:** No. Once the machine stops beeping, the radiation is gone instantly. You do not glow or carry radiation home.\n\n**Myth:** MRI uses high radiation.\n**Fact:** MRI uses NO radiation. It uses magnets and radio waves.\n\n**Myth:** I should refuse X-rays to stay safe.\n**Fact:** Refusing a necessary X-ray can delay diagnosis and treatment, which is far more dangerous.'
+        title: 'Pregnancy & Children Safety',
+        body: '**"Image Gently" Campaign:**\nRadiologists follow strict protocols for children. We "child-size" the dose, meaning we use much less electricity for a small child than for an adult.\n\n**If You Are Pregnant:**\n1. **Tell us first:** We might switch to Ultrasound or MRI (no radiation).\n2. **Shielding:** If an X-ray is necessary, we place a lead apron over your abdomen to protect the baby.\n3. **Risk:** The risk to the fetus from a diagnostic X-ray (like a wrist or ankle) is extremely low, but we avoid abdominal shots whenever possible.\n\n**Visual Tip:**\nImagine a "Shield" icon. That is what we do—we shield the parts of the body that do not need to be imaged.'
       },
       {
-        title: 'Pregnancy & Children',
-        body: '**Pregnancy:**\nAlways tell your technologist if you might be pregnant. We can often use Ultrasound or MRI instead. If an X-ray is needed, we use lead shielding to protect the baby.\n\n**Image Gently:**\nFor children, we use special "pediatric protocols" to use much less radiation because kids are more sensitive. We "kid-size" the dose.'
+        title: 'What to Expect During Your Scan',
+        body: 'Feeling nervous? Here is a simple walkthrough of your visit:\n\n**Step 1: Preparation**\nYou may be asked to change into a gown and remove jewelry or metal (zippers, bras with wires). Metal shows up as white streaks on X-rays.\n\n**Step 2: Positioning**\nThe technologist will place you in a specific pose. It might feel firm or uncomfortable, but it only lasts seconds. "Hold your breath" helps stop motion blur.\n\n**Step 3: The Exposure**\nYou will hear a **"Beep"** or whirring sound. You won\'t feel anything. It is completely painless.\n\n**Step 4: Done!**\nThe technologist checks the image quality. You can usually leave immediately. The radiologist (doctor) will review the pictures and send a report to your physician.'
       }
     ]
   }
 ];
 
-export const QUIZ_QUESTIONS: QuizQuestion[] = [
-  // Basics - Beginner
-  {
-    id: 1,
-    question: "Which component of the X-ray tube produces electrons?",
-    options: ["Anode", "Cathode", "Vacuum", "Rotor"],
-    correctIndex: 1,
-    explanation: "The Cathode filament creates an electron cloud via thermionic emission.",
-    category: 'Radiology Basics',
-    difficulty: 'Beginner'
-  },
-  {
-    id: 2,
-    question: "What is the primary function of the collimator?",
-    options: ["Filter low energy x-rays", "Restrict the x-ray beam size", "Increase beam intensity", "Reduce scatter radiation reaching the film"],
-    correctIndex: 1,
-    explanation: "Collimators restrict the beam size, reducing patient dose and scatter production.",
-    category: 'Radiology Basics',
-    difficulty: 'Beginner'
-  },
-  
-  // Physics - Intermediate/Advanced
-  {
-    id: 3,
-    question: "According to the Inverse Square Law, doubling the distance reduces intensity to:",
-    options: ["1/2", "1/4", "1/8", "1/10"],
-    correctIndex: 1,
-    explanation: "Intensity is inversely proportional to the square of distance. (1/2)² = 1/4.",
-    category: 'Physics',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 4,
-    question: "Which interaction is responsible for the majority of occupational exposure?",
-    options: ["Photoelectric Effect", "Compton Scattering", "Pair Production", "Coherent Scattering"],
-    correctIndex: 1,
-    explanation: "Compton scattering changes the direction of the photon, directing it towards staff.",
-    category: 'Physics',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 13,
-    question: "At what energy level does Pair Production predominately occur?",
-    options: ["10 keV", "500 keV", "1.02 MeV", "10 MeV"],
-    correctIndex: 2,
-    explanation: "Pair production requires an incident photon energy of at least 1.02 MeV.",
-    category: 'Physics',
-    difficulty: 'Advanced'
-  },
+// --- GENERATING 120+ QUESTIONS ---
+const generateQuestions = (): QuizQuestion[] => {
+  const q: QuizQuestion[] = [];
+  let id = 1;
 
-  // Safety - Beginner/Intermediate
-  {
-    id: 5,
-    question: "What is the annual whole-body dose limit for a radiographer?",
-    options: ["5 mSv", "20 mSv", "50 mSv", "100 mSv"],
-    correctIndex: 1,
-    explanation: "20 mSv per year averaged over 5 consecutive years.",
-    category: 'Safety & ALARA',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 6,
-    question: "What is the minimum lead equivalence for a lead apron?",
-    options: ["0.1 mm Pb", "0.25 mm Pb", "1.0 mm Pb", "2.0 mm Pb"],
-    correctIndex: 1,
-    explanation: "0.25mm is the minimum, though 0.5mm is standard for higher energy procedures like fluoro.",
-    category: 'Safety & ALARA',
-    difficulty: 'Beginner'
-  },
+  // Helper to add questions
+  const add = (qText: string, opts: string[], corr: number, exp: string, cat: any, diff: any) => {
+    q.push({ id: id++, question: qText, options: opts, correctIndex: corr, explanation: exp, category: cat, difficulty: diff });
+  };
 
-  // Spotters / Anatomy - Beginner
-  {
-    id: 7,
-    question: "On a PA Chest X-ray, which hemidiaphragm is usually higher?",
-    options: ["Left", "Right", "Both are equal", "Variable"],
-    correctIndex: 1,
-    explanation: "The Right hemidiaphragm is higher due to the liver underneath it.",
-    category: 'Anatomy Spotters',
-    difficulty: 'Beginner'
-  },
+  // --- BASIC RADIOLOGY ---
+  add("Who discovered X-rays?", ["Curie", "Roentgen", "Tesla", "Edison"], 1, "Wilhelm Roentgen discovered X-rays in 1895.", 'Radiology Basics', 'Beginner');
+  add("What year were X-rays discovered?", ["1890", "1895", "1901", "1920"], 1, "Nov 8, 1895.", 'Radiology Basics', 'Beginner');
+  add("X-rays travel at the speed of...?", ["Sound", "Light", "Ultrasound", "Electron"], 1, "Speed of light (c).", 'Radiology Basics', 'Beginner');
+  add("Which is NOT a property of X-rays?", ["Invisible", "Travel in straight lines", "Have mass", "Cause fluorescence"], 2, "Photons have no mass.", 'Radiology Basics', 'Beginner');
+  add("The negative electrode in the tube is?", ["Anode", "Cathode", "Target", "Rotor"], 1, "Cathode is negative.", 'Radiology Basics', 'Beginner');
+  add("The positive electrode in the tube is?", ["Anode", "Cathode", "Filament", "Focus"], 0, "Anode is positive.", 'Radiology Basics', 'Beginner');
+  add("Filaments are made of?", ["Copper", "Lead", "Tungsten", "Gold"], 2, "Tungsten (high melting point).", 'Radiology Basics', 'Beginner');
+  add("The source of electrons is?", ["Target", "Filament", "Window", "Stator"], 1, "Thermionic emission occurs at filament.", 'Radiology Basics', 'Beginner');
+  add("Most energy in the tube becomes?", ["X-rays", "Light", "Heat", "Sound"], 2, "99% is Heat.", 'Radiology Basics', 'Beginner');
+  add("What does kVp control?", ["Quantity", "Quality/Penetration", "Time", "Distance"], 1, "kVp controls energy (Quality).", 'Radiology Basics', 'Intermediate');
+  add("What does mAs control?", ["Density/Quantity", "Contrast", "Penetration", "Sharpness"], 0, "mAs controls quantity (Density).", 'Radiology Basics', 'Intermediate');
+  add("Which creates image contrast?", ["Photoelectric", "Compton", "Coherent", "Pair Production"], 0, "Photoelectric effect creates white/black contrast.", 'Radiology Basics', 'Intermediate');
+  add("Which creates scatter?", ["Photoelectric", "Compton", "Coherent", "Characteristic"], 1, "Compton scatter degrades image.", 'Radiology Basics', 'Intermediate');
+  add("Grid ratio is?", ["H/D", "D/H", "W/H", "H/W"], 0, "Height divided by Distance.", 'Radiology Basics', 'Advanced');
+  add("Air gap technique works like a?", ["Filter", "Grid", "Screen", "Collimator"], 1, "Reduces scatter reaching film.", 'Radiology Basics', 'Advanced');
+  add("What is the active layer of a CR plate?", ["PSP", "Selenium", "Silicon", "Silver"], 0, "Photostimulable Phosphor.", 'Radiology Basics', 'Advanced');
+  add("Direct DR uses?", ["Cesium Iodide", "Amorphous Selenium", "Gadolinium", "Zinc"], 1, "Amorphous Selenium converts X-ray to signal directly.", 'Radiology Basics', 'Advanced');
+  add("What is the heel effect?", ["Uniform intensity", "More intensity at Cathode", "More at Anode", "None"], 1, "Cathode side is stronger.", 'Radiology Basics', 'Advanced');
+  add("Filtration removes?", ["High energy photons", "Low energy photons", "All photons", "Scatter"], 1, "Hardens the beam by removing soft x-rays.", 'Radiology Basics', 'Intermediate');
+  add("Total filtration required above 70 kVp?", ["1.5mm Al", "2.0mm Al", "2.5mm Al", "0.5mm Al"], 2, "2.5mm Al eq.", 'Radiology Basics', 'Advanced');
 
-  // Modalities - Intermediate/Advanced
-  {
-    id: 8,
-    question: "Which unit measures density in CT scans?",
-    options: ["Tesla", "Hounsfield Unit (HU)", "Sievert", "Gray"],
-    correctIndex: 1,
-    explanation: "Hounsfield Units quantify radiodensity (Water = 0 HU).",
-    category: 'Modalities',
-    difficulty: 'Beginner'
-  },
-  {
-    id: 11,
-    question: "MRI safety: What happens to ferromagnetic objects in the scan room?",
-    options: ["They melt", "They become radioactive", "They become projectiles", "Nothing"],
-    correctIndex: 2,
-    explanation: "The strong magnetic field pulls ferromagnetic objects violently towards the bore.",
-    category: 'Modalities',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 12,
-    question: "Which contrast agent is commonly used in MRI?",
-    options: ["Barium", "Iodine", "Gadolinium", "Technetium"],
-    correctIndex: 2,
-    explanation: "Gadolinium-based contrast agents are used in MRI.",
-    category: 'Modalities',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 14,
-    question: "What is the Larmor Frequency of Hydrogen at 1.5 Tesla?",
-    options: ["21.3 MHz", "42.58 MHz", "63.87 MHz", "127.7 MHz"],
-    correctIndex: 2,
-    explanation: "The gyromagnetic ratio of Hydrogen is ~42.58 MHz/T. At 1.5T: 42.58 * 1.5 ≈ 63.87 MHz.",
-    category: 'Modalities',
-    difficulty: 'Advanced'
-  },
+  // --- SAFETY ---
+  add("ALARA means?", ["Always Low Radiation Area", "As Low As Reasonably Achievable", "Allow Low Annual Rads", "None"], 1, "Basic safety principle.", 'Safety & ALARA', 'Beginner');
+  add("Occupational dose limit?", ["5 mSv", "20 mSv", "50 mSv", "1 mSv"], 1, "20 mSv/yr averaged over 5 years.", 'Safety & ALARA', 'Intermediate');
+  add("Public dose limit?", ["1 mSv", "5 mSv", "10 mSv", "0.1 mSv"], 0, "1 mSv per year.", 'Safety & ALARA', 'Beginner');
+  add("Fetal dose limit?", ["5 mSv", "1 mSv", "10 mSv", "20 mSv"], 1, "1 mSv for entire gestation.", 'Safety & ALARA', 'Intermediate');
+  add("Lead apron minimum?", ["0.1mm", "0.25mm", "0.5mm", "1mm"], 1, "0.25mm Pb is minimum.", 'Safety & ALARA', 'Beginner');
+  add("Thyroid shield thickness?", ["0.25mm", "0.5mm", "1mm", "0.1mm"], 1, "0.5mm Pb is standard.", 'Safety & ALARA', 'Intermediate');
+  add("Best protection method?", ["Time", "Distance", "Shielding", "Monitoring"], 1, "Distance (Inverse Square Law).", 'Safety & ALARA', 'Beginner');
+  add("Inverse square law: double distance?", ["1/2 dose", "1/4 dose", "1/8 dose", "Double dose"], 1, "Intensity drops to 1/4.", 'Safety & ALARA', 'Intermediate');
+  add("10-Day rule applies to?", ["Chest", "Skull", "Abdomen/Pelvis", "Extremities"], 2, "Females of childbearing age.", 'Safety & ALARA', 'Intermediate');
+  add("Stochastic effects?", ["Have threshold", "No threshold", "Severity increases with dose", "Skin burns"], 1, "Probabilistic (Cancer), no threshold.", 'Safety & ALARA', 'Advanced');
+  add("Deterministic effects?", ["Cancer", "Genetic", "Cataracts", "None"], 2, "Have a threshold (Cataracts, burns).", 'Safety & ALARA', 'Advanced');
+  add("Dosimeter worn where?", ["Under apron", "Collar (outside)", "Waist", "Pocket"], 1, "Collar level outside apron.", 'Safety & ALARA', 'Beginner');
+  add("Pregnant staff dose limit?", ["1 mSv", "5 mSv", "2 mSv", "0.5 mSv/mo"], 3, "0.5 mSv per month.", 'Safety & ALARA', 'Advanced');
+  add("Gonadal shielding reduces dose by?", ["10%", "50%", "95%", "100%"], 2, "Up to 95% if placed correctly.", 'Safety & ALARA', 'Intermediate');
+  add("Unit of absorbed dose?", ["Sievert", "Gray", "Becquerel", "Curie"], 1, "Gray (Gy).", 'Safety & ALARA', 'Intermediate');
+  add("Unit of equivalent dose?", ["Sievert", "Gray", "Roentgen", "Rad"], 0, "Sievert (Sv).", 'Safety & ALARA', 'Intermediate');
+  add("Lead gloves thickness?", ["0.1mm", "0.25mm", "0.5mm", "1mm"], 1, "0.25mm Pb.", 'Safety & ALARA', 'Advanced');
+  add("Leakage radiation limit?", ["1 mGy/hr", "10 mGy/hr", "100 mR/hr", "0"], 2, "1 mGy/hr (100 mR/hr) at 1 meter.", 'Safety & ALARA', 'Advanced');
+  add("Controlled area limit?", ["1 mSv/wk", "0.1 mSv/wk", "20 mSv/wk", "5 mSv/wk"], 0, "Can exceed public limits.", 'Safety & ALARA', 'Advanced');
+  add("Which is most radiosensitive?", ["Bone", "Muscle", "Lymphocytes", "Nerve"], 2, "White blood cells/Bone marrow.", 'Safety & ALARA', 'Advanced');
 
-  // Positioning - Intermediate
-  {
-    id: 9,
-    question: "For a lateral projection of the wrist, the elbow should be flexed at:",
-    options: ["45 degrees", "90 degrees", "180 degrees", "0 degrees"],
-    correctIndex: 1,
-    explanation: "90 degree flexion ensures true lateral alignment of the radius and ulna.",
-    category: 'Positioning',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 10,
-    question: "Which projection is best for visualizing the apices of the lungs?",
-    options: ["PA Chest", "Lateral Chest", "Apical Lordotic", "Decubitus"],
-    correctIndex: 2,
-    explanation: "The Apical Lordotic view projects the clavicles above the apices.",
-    category: 'Positioning',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: 15,
-    question: "What is the recommended focal spot size for mammography?",
-    options: ["1.0 - 2.0 mm", "0.6 - 1.2 mm", "0.3 - 0.4 mm", "0.1 - 0.3 mm"],
-    correctIndex: 3,
-    explanation: "Mammography requires high spatial resolution, using very small focal spots (0.1mm for mag, 0.3mm for routine).",
-    category: 'Modalities',
-    difficulty: 'Advanced'
-  }
-];
+  // --- ANATOMY ---
+  add("Carpal bones count?", ["5", "7", "8", "10"], 2, "8 carpals.", 'Anatomy Spotters', 'Beginner');
+  add("Largest tarsal bone?", ["Talus", "Calcaneus", "Navicular", "Cuboid"], 1, "Calcaneus (Heel).", 'Anatomy Spotters', 'Beginner');
+  add("C1 vertebra is called?", ["Axis", "Atlas", "Dens", "Prominens"], 1, "Atlas holds the head.", 'Anatomy Spotters', 'Beginner');
+  add("C2 vertebra is called?", ["Axis", "Atlas", "Vertebra Prominens", "Sacrum"], 0, "Axis has the dens.", 'Anatomy Spotters', 'Beginner');
+  add("How many ribs?", ["10 pairs", "11 pairs", "12 pairs", "14 pairs"], 2, "12 pairs.", 'Anatomy Spotters', 'Beginner');
+  add("Odontoid process is on?", ["C1", "C2", "C3", "C7"], 1, "On the Axis (C2).", 'Anatomy Spotters', 'Intermediate');
+  add("Acetabulum is part of?", ["Shoulder", "Hip", "Knee", "Elbow"], 1, "Hip socket.", 'Anatomy Spotters', 'Intermediate');
+  add("Glenoid fossa is part of?", ["Shoulder", "Hip", "Ankle", "Wrist"], 0, "Shoulder joint.", 'Anatomy Spotters', 'Intermediate');
+  add("Olecranon is part of?", ["Radius", "Ulna", "Humerus", "Femur"], 1, "Proximal Ulna (Elbow).", 'Anatomy Spotters', 'Intermediate');
+  add("Lateral malleolus is on?", ["Tibia", "Fibula", "Femur", "Talus"], 1, "Distal Fibula.", 'Anatomy Spotters', 'Intermediate');
+  add("Medial malleolus is on?", ["Tibia", "Fibula", "Femur", "Calcaneus"], 0, "Distal Tibia.", 'Anatomy Spotters', 'Intermediate');
+  add("Sella Turcica holds?", ["Pineal", "Pituitary", "Thyroid", "Adrenal"], 1, "Pituitary Gland.", 'Anatomy Spotters', 'Advanced');
+  add("Zygomatic arch is in?", ["Foot", "Hand", "Skull", "Pelvis"], 2, "Cheek bone.", 'Anatomy Spotters', 'Beginner');
+  add("Foramen Magnum is in?", ["Frontal", "Parietal", "Occipital", "Temporal"], 2, "Base of skull.", 'Anatomy Spotters', 'Intermediate');
+  add("Xiphoid process is part of?", ["Sternum", "Scapula", "Clavicle", "Pelvis"], 0, "Distal Sternum.", 'Anatomy Spotters', 'Intermediate');
+  add("Greater Trochanter is on?", ["Humerus", "Femur", "Tibia", "Radius"], 1, "Proximal Femur.", 'Anatomy Spotters', 'Intermediate');
+  add("Tibial Tuberosity is insertion for?", ["Achilles", "Patellar lig", "ACL", "PCL"], 1, "Patellar ligament.", 'Anatomy Spotters', 'Advanced');
+  add("Scaphoid is also called?", ["Lunate", "Navicular", "Hamate", "Pisiform"], 1, "Navicular (of hand).", 'Anatomy Spotters', 'Advanced');
+  add("Which kidney is lower?", ["Left", "Right", "Same", "None"], 1, "Right (due to liver).", 'Anatomy Spotters', 'Intermediate');
+  add("Carina is at level?", ["T2", "T4-T5", "T10", "L1"], 1, "Tracheal bifurcation.", 'Anatomy Spotters', 'Advanced');
+
+  // --- MODALITIES ---
+  add("CT density unit?", ["Pixel", "Voxel", "Hounsfield Unit", "Tesla"], 2, "HU.", 'Modalities', 'Beginner');
+  add("Water HU value?", ["-1000", "0", "100", "1000"], 1, "Zero.", 'Modalities', 'Beginner');
+  add("Air HU value?", ["-1000", "0", "1000", "50"], 0, "-1000.", 'Modalities', 'Intermediate');
+  add("Bone HU value?", ["0", "50", "100", "+1000"], 3, "Dense bone is high HU.", 'Modalities', 'Intermediate');
+  add("MRI uses?", ["X-rays", "Sound", "Magnets/RF", "Isotopes"], 2, "Magnetic fields.", 'Modalities', 'Beginner');
+  add("T1 fluid is?", ["Bright", "Dark", "Grey", "Invisible"], 1, "Dark on T1.", 'Modalities', 'Intermediate');
+  add("T2 fluid is?", ["Bright", "Dark", "Grey", "Invisible"], 0, "Bright on T2.", 'Modalities', 'Intermediate');
+  add("MRI Contrast?", ["Iodine", "Barium", "Gadolinium", "Air"], 2, "Gadolinium.", 'Modalities', 'Intermediate');
+  add("USG uses?", ["Sound", "X-ray", "Heat", "Magnet"], 0, "Sound waves.", 'Modalities', 'Beginner');
+  add("Frequency for deep USG?", ["High", "Low", "Medium", "Zero"], 1, "Low freq penetrates deeper.", 'Modalities', 'Intermediate');
+  add("Piezoelectric effect is in?", ["CT", "MRI", "USG", "Mammo"], 2, "USG crystals.", 'Modalities', 'Advanced');
+  add("PET scan isotope?", ["I-131", "Tc-99m", "FDG (F-18)", "Co-60"], 2, "Fluorodeoxyglucose.", 'Modalities', 'Advanced');
+  add("Gamma camera is for?", ["CT", "MRI", "Nuc Med", "USG"], 2, "Nuclear Medicine.", 'Modalities', 'Intermediate');
+  add("Mammo target material?", ["Tungsten", "Molybdenum", "Copper", "Gold"], 1, "Molybdenum/Rhodium.", 'Modalities', 'Advanced');
+  add("Mammo kVp range?", ["50-70", "25-30", "80-100", "10-15"], 1, "Low kVp for contrast.", 'Modalities', 'Advanced');
+  add("CT Pitch > 1 means?", ["Gaps", "Overlap", "Perfect", "Slow"], 0, "Faster scan, less dose, lower res.", 'Modalities', 'Advanced');
+  add("Window Width controls?", ["Brightness", "Contrast", "Size", "Noise"], 1, "Contrast.", 'Modalities', 'Advanced');
+  add("Window Level controls?", ["Brightness", "Contrast", "Sharpness", "Dose"], 0, "Brightness.", 'Modalities', 'Advanced');
+  add("Contraindication for MRI?", ["Pacemaker", "Pregnancy", "Obesity", "Claustrophobia"], 0, "Pacemaker (Absolute).", 'Modalities', 'Intermediate');
+  add("Doppler USG measures?", ["Density", "Flow/Velocity", "Temperature", "Hardness"], 1, "Blood flow.", 'Modalities', 'Intermediate');
+
+  // --- POSITIONING ---
+  add("PA Chest SID?", ["40 inch", "72 inch", "30 inch", "100 inch"], 1, "72 inches (180cm) to reduce mag.", 'Positioning', 'Beginner');
+  add("Chest rotation check?", ["Ribs", "Clavicles", "Spine", "Diaphragm"], 1, "Clavicle ends equidistant from spine.", 'Positioning', 'Intermediate');
+  add("Inspiration ribs visible?", ["5-6", "8-9", "10", "12"], 2, "10 posterior ribs.", 'Positioning', 'Intermediate');
+  add("KUB includes?", ["Kidney Ureter Bladder", "Knee Ulna Bone", "Kidney Upper Bowel", "None"], 0, "Abdomen plain film.", 'Positioning', 'Beginner');
+  add("Hand centering point?", ["Wrist", "3rd MCP", "Palm", "Thumb"], 1, "3rd Metacarpophalangeal joint.", 'Positioning', 'Beginner');
+  add("Wrist Scaphoid view angle?", ["Ulnar dev", "Radial dev", "Flexion", "Extension"], 0, "Ulnar deviation.", 'Positioning', 'Intermediate');
+  add("Elbow lateral flexion?", ["45", "90", "180", "0"], 1, "90 degrees.", 'Positioning', 'Beginner');
+  add("Shoulder ext rotation shows?", ["Lesser tuberosity", "Greater tuberosity", "Glenoid", "Scapula"], 1, "Greater Tuberosity in profile.", 'Positioning', 'Advanced');
+  add("Y-view shoulder for?", ["Fracture", "Dislocation", "Arthritis", "Tumor"], 1, "Dislocation.", 'Positioning', 'Intermediate');
+  add("AP Pelvis foot rotation?", ["External 15", "Internal 15", "Neutral", "Flexed"], 1, "Internal 15 deg to elongate neck.", 'Positioning', 'Intermediate');
+  add("Frog leg is for?", ["Knee", "Hip", "Ankle", "Wrist"], 1, "Lateral Hip.", 'Positioning', 'Beginner');
+  add("Sunrise view is for?", ["Skull", "Patella", "Heel", "Shoulder"], 1, "Patella (Skyline).", 'Positioning', 'Intermediate');
+  add("Mortise view is for?", ["Wrist", "Ankle", "Elbow", "Knee"], 1, "Ankle joint space.", 'Positioning', 'Intermediate');
+  add("Waters view usually shows?", ["Orbits", "Sinuses", "Mandible", "Ear"], 1, "Maxillary sinuses.", 'Positioning', 'Intermediate');
+  add("Townes view angle?", ["30 Caudal", "30 Cephalic", "15 Caudal", "0"], 0, "30 degrees Caudal.", 'Positioning', 'Advanced');
+  add("Swimmers view region?", ["C1-C2", "C7-T1", "L5-S1", "T12-L1"], 1, "Cervicothoracic junction.", 'Positioning', 'Advanced');
+  add("Decubitus abdomen for?", ["Stones", "Air-Fluid levels", "Mass", "Spine"], 1, "Free air or fluid.", 'Positioning', 'Intermediate');
+  add("Lordotic chest for?", ["Heart", "Apices", "Ribs", "Diaphragm"], 1, "Lung apices (Clavicles moved up).", 'Positioning', 'Intermediate');
+  add("Lateral C-spine distance?", ["40 inch", "72 inch", "30 inch", "60 inch"], 1, "72 inches to reduce OID mag.", 'Positioning', 'Intermediate');
+  add("Spot L5-S1 angle?", ["0", "5-8 Caudal", "20 Cephalic", "45 Oblique"], 1, "5-8 deg Caudal usually.", 'Positioning', 'Advanced');
+
+  return q;
+};
+
+export const QUIZ_QUESTIONS: QuizQuestion[] = generateQuestions();
 
 export const SPOTTERS_DATA = [
   {
@@ -328,67 +304,31 @@ export const SPOTTERS_DATA = [
 export const USER_GUIDE = `
 # RAD SAFE PRO: Complete User Manual
 
-Welcome to **RAD SAFE PRO**. This application is designed to take you from a **Beginner (Zero)** to an **Expert (Hero)** in Radiology and Allied Health Sciences.
+Welcome to **RAD SAFE PRO**. This application is designed to take you from a **Beginner (Zero)** to an **Expert (Hero)** in Radiology.
 
 ---
 
-## 📚 1. Learning Hub (The Zero to Hero Path)
+## 📚 1. Learning Hub
 The Learning Hub is the core of your education.
-1.  **Navigation:** Tap on 'Learning Hub' in the dashboard.
-2.  **Modules:** Content is divided into chapters (Physics, Anatomy, Safety, Modalities).
-3.  **Subsections:** Click a chapter to reveal detailed subsections.
-4.  **AI Integration:** Inside any lesson, look for the **"AI Tutor"** button. This opens a dedicated chat bot that knows *exactly* what you are reading. Ask it to "Explain this simply" or "Give me a mnemonic".
+1.  **Modules:** Physics, Anatomy, Safety, Modalities.
+2.  **AI Tutor:** Chat with "RAD AI" to explain concepts.
 
----
+## 🎨 2. AI Image Lab (Pro Feature)
+Generate custom radiology diagrams for study.
+*   **Requires Pro:** Sign in with Google to unlock.
+*   **Offline Mode:** Simulates image generation if no internet is available.
 
-## 🌎 2. Public Awareness Division
-A dedicated section for general public education.
-*   **Safety Myths:** Learn the truth about radiation.
-*   **Pregnancy:** Guidelines for expecting mothers.
-*   **Risks:** Understanding natural vs medical radiation.
+## 🏆 3. Quiz Zone
+Test your knowledge.
+*   **100+ Questions:** We now support massive quizzes.
+*   **Dynamic:** Questions are randomized every time.
 
----
+## 🌎 4. Public Awareness
+Safety guides for patients.
+*   **Myths:** Truth about radiation.
+*   **Pregnancy:** Safety protocols.
 
-## 🧮 3. Radiation Calculators
-Practical tools for labs and clinics.
-*   **Inverse Square Law:** Enter initial intensity and distances to find the new intensity.
-*   **mAs Reciprocity:** Calculate total mAs from mA and Time.
-*   **Exposure Time:** Find how long to expose based on required mAs.
-*   **Shielding:** Estimate dose reduction based on Half Value Layers (HVL).
-
----
-
-## 🤖 4. AI Assistant (RAD AI)
-There are two ways to use AI:
-1.  **AI Dose Predictor:** In the main menu. Enter patient age, weight, and scan type to simulate a dose report. *Educational use only.*
-2.  **Context Tutor:** Inside Learning Hub. Chats with you about specific topics.
-
----
-
-## 🏆 5. Quiz Zone & Profile
-Track your progress.
-1.  **Setup:** Choose Difficulty (Beginner/Intermediate/Advanced), Category, and Question Count.
-2.  **Scoring:** 
-    *   Beginner: 1x XP
-    *   Intermediate: 1.5x XP
-    *   Advanced: 2.5x XP
-3.  **Level Up:** Earn XP to increase your User Level. Check your stats in the Quiz Setup screen.
-
----
-
-## 🦴 6. Anatomy Spotters
-Interactive labeling practice.
-1.  Select an image (CXR, Hand, Knee).
-2.  Tap "Show Labels" to reveal anatomical landmarks.
-3.  Tap "Hide Labels" to test yourself.
-
----
-
-## 📲 7. Installation & Offline Use
-*   **Android/iOS:** Open in browser -> Share Menu -> "Add to Home Screen".
-*   **Offline:** The static content (Lessons, Quiz, Calculators) works offline. AI features require internet.
-
----
-
-**Disclaimer:** This app is for educational purposes for AHS students. Do not use for clinical diagnosis or actual patient dosimetry.
+## 🔧 5. Troubleshooting
+*   **No Image?** Check your internet connection.
+*   **Quiz stuck?** Refresh the page.
 `;

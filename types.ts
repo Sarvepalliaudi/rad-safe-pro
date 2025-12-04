@@ -5,11 +5,12 @@ export interface Section {
   category: 'core' | 'safety' | 'advanced' | 'tools' | 'interactive' | 'info' | 'public';
   icon: string;
   content?: string;
-  subsections?: { title: string; body: string }[];
+  subsections?: { title: string; body: string; imageUrl?: string }[];
 }
 
 export type QuizCategory = 'All' | 'Radiology Basics' | 'Safety & ALARA' | 'Anatomy Spotters' | 'Physics' | 'Modalities' | 'Positioning';
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
+export type UserRole = 'student' | 'patient' | 'public' | 'officer';
 
 export interface QuizQuestion {
   id: number;
@@ -34,7 +35,7 @@ export enum CalculatorType {
   EXPOSURE_TIME = 'EXPOSURE_TIME'
 }
 
-export type ViewState = 'START' | 'DASHBOARD' | 'SECTION';
+export type ViewState = 'START' | 'AUTH' | 'DASHBOARD' | 'SECTION';
 
 export interface QuizResult {
   id: string;
@@ -47,7 +48,11 @@ export interface QuizResult {
 }
 
 export interface UserProfile {
+  id: string;
+  email: string;
   name: string;
+  role: UserRole;
+  isPro: boolean; // New field for Pro features
   level: number;
   currentXp: number;
   totalXp: number;

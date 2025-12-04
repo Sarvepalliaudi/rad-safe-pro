@@ -1,10 +1,15 @@
 
 import { UserProfile, QuizResult, Difficulty } from '../types';
 
-const STORAGE_KEY = 'rad_safe_user_v1';
+const SESSION_KEY = 'rad_safe_session';
+const USERS_DB_KEY = 'rad_safe_users_db';
 
-const getInitialProfile = (): UserProfile => ({
+export const getInitialProfile = (): UserProfile => ({
+  id: '',
+  email: '',
   name: 'Student',
+  role: 'student',
+  isPro: false,
   level: 1,
   currentXp: 0,
   totalXp: 0,
@@ -15,7 +20,7 @@ const getInitialProfile = (): UserProfile => ({
 
 export const getUserProfile = (): UserProfile => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = localStorage.getItem(SESSION_KEY);
     if (data) return JSON.parse(data);
   } catch (e) {
     console.error("Failed to load user profile", e);
@@ -33,15 +38,13 @@ export const saveQuizResult = (
   const profile = getUserProfile();
   
   // XP Calculation Logic
-  // Base XP: 10 per correct answer
-  // Multipliers: Beginner 1x, Intermediate 1.5x, Advanced 2.5x
   let multiplier = 1;
   if (difficulty === 'Intermediate') multiplier = 1.5;
   if (difficulty === 'Advanced') multiplier = 2.5;
 
   const xpGained = Math.round(score * 10 * multiplier);
   
-  // Update Profile
+  // Update Profile Stats
   profile.currentXp += xpGained;
   profile.totalXp += xpGained;
   profile.quizzesTaken += 1;
@@ -60,8 +63,7 @@ export const saveQuizResult = (
   profile.history.unshift(newResult);
   if (profile.history.length > 50) profile.history.pop();
 
-  // Level Up Logic (Simple curve)
-  // Level 1: 100, Level 2: 200, Level 3: 400, etc.
+  // Level Up Logic
   let leveledUp = false;
   while (profile.currentXp >= profile.nextLevelXp) {
     profile.currentXp -= profile.nextLevelXp;
@@ -70,11 +72,20 @@ export const saveQuizResult = (
     leveledUp = true;
   }
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+  // SAVE TO SESSION
+  localStorage.setItem(SESSION_KEY, JSON.stringify(profile));
+
+  // SYNC TO DB (So persistence works across logouts)
+  // In a real app, this would be an API call
+  const usersStr = localStorage.getItem(USERS_DB_KEY);
+  if (usersStr) {
+    const users = JSON.parse(usersStr);
+    const index = users.findIndex((u: any) => u.email === profile.email);
+    if (index !== -1) {
+      users[index].profile = profile;
+      localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+    }
+  }
   
   return { profile, xpGained, leveledUp };
-};
-
-export const clearUserData = () => {
-  localStorage.removeItem(STORAGE_KEY);
 };

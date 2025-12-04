@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, QuizCategory, Difficulty, UserProfile } from '../types';
-import { CheckCircle, XCircle, RefreshCw, HelpCircle, Settings, Play, Trophy, BarChart2, Star } from 'lucide-react';
+import { CheckCircle, XCircle, RefreshCw, HelpCircle, Settings, Play, Trophy, BarChart2, Star, AlertCircle } from 'lucide-react';
 import { getUserProfile, saveQuizResult } from '../services/userService';
 
 interface QuizProps {
@@ -24,13 +24,23 @@ const Quiz: React.FC<QuizProps> = ({ allQuestions, onExit }) => {
   const [score, setScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   const [resultData, setResultData] = useState<{ xp: number, leveledUp: boolean } | null>(null);
+  const [availableCount, setAvailableCount] = useState(0);
 
   useEffect(() => {
-    // Refresh profile whenever we enter SETUP or STATS
+    // Refresh profile and available count
     if (phase === 'SETUP' || phase === 'STATS') {
       setUserProfile(getUserProfile());
+      calculateAvailable();
     }
-  }, [phase]);
+  }, [phase, config.category, config.difficulty]);
+
+  const calculateAvailable = () => {
+    let filtered = allQuestions.filter(q => q.difficulty === config.difficulty);
+    if (config.category !== 'All') {
+      filtered = filtered.filter(q => q.category === config.category);
+    }
+    setAvailableCount(filtered.length);
+  };
 
   // Setup Handlers
   const startQuiz = () => {
@@ -41,7 +51,11 @@ const Quiz: React.FC<QuizProps> = ({ allQuestions, onExit }) => {
     }
     
     // Shuffle and slice
-    filtered = filtered.sort(() => 0.5 - Math.random()).slice(0, config.count);
+    filtered = filtered.sort(() => 0.5 - Math.random());
+
+    // Fix: If requested count is more than available, take all available
+    const finalCount = Math.min(config.count, filtered.length);
+    filtered = filtered.slice(0, finalCount);
     
     if (filtered.length === 0) {
       alert(`No ${config.difficulty} questions found for ${config.category} yet! Try a different combo.`);
@@ -145,27 +159,44 @@ const Quiz: React.FC<QuizProps> = ({ allQuestions, onExit }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-500 uppercase mb-2">Number of Questions</label>
+            <div className="flex justify-between items-end mb-2">
+               <label className="block text-sm font-semibold text-slate-500 uppercase">Number of Questions</label>
+               <span className="text-xs text-rad-600 font-medium">Available in pool: {availableCount}</span>
+            </div>
+            
             <div className="flex flex-wrap gap-2">
               {[5, 10, 20, 25, 50].map(num => (
                 <button
                   key={num}
                   onClick={() => setConfig({ ...config, count: num })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium border ${
+                  disabled={availableCount < 5 && num > availableCount} 
+                  className={`px-4 py-2 rounded-lg text-sm font-medium border relative ${
                     config.count === num
                       ? 'bg-rad-600 text-white border-rad-600'
                       : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50'
-                  }`}
+                  } ${num > availableCount ? 'opacity-50' : ''}`}
                 >
                   {num}
+                  {num > availableCount && availableCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">
+                      {availableCount}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
+            {config.count > availableCount && availableCount > 0 && (
+              <div className="mt-2 text-xs text-orange-600 flex items-center gap-1">
+                <AlertCircle size={12}/> 
+                Only {availableCount} questions available. We will show all of them.
+              </div>
+            )}
           </div>
 
           <button 
             onClick={startQuiz}
-            className="w-full bg-rad-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-rad-700 shadow-lg shadow-rad-200 flex items-center justify-center gap-2 mt-4"
+            disabled={availableCount === 0}
+            className="w-full bg-rad-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-rad-700 shadow-lg shadow-rad-200 flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Start Quiz <Play size={20} fill="currentColor" />
           </button>

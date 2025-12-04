@@ -139,6 +139,13 @@ const LearningContent: React.FC<LearningContentProps> = ({ section }) => {
                 {sub.title}
                 {activeSubsection !== idx && <ChevronRight size={16} className="text-slate-300"/>}
               </h3>
+
+              {/* Image Rendering */}
+              {sub.imageUrl && (
+                <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 max-h-60">
+                   <img src={sub.imageUrl} alt={sub.title} className="w-full h-full object-cover" />
+                </div>
+              )}
               
               {/* Render Markdown-like content */}
               <div className="prose prose-slate max-w-none text-gray-600 leading-relaxed">
@@ -199,7 +206,6 @@ const LearningContent: React.FC<LearningContentProps> = ({ section }) => {
                     ? 'bg-slate-800 text-white rounded-tr-none' 
                     : 'bg-white border border-gray-200 text-slate-700 rounded-tl-none shadow-sm'
                 }`}>
-                  {/* Basic markdown parsing for bold text in chat */}
                   <span dangerouslySetInnerHTML={{ __html: msg.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
                 </div>
               </div>
@@ -225,7 +231,7 @@ const LearningContent: React.FC<LearningContentProps> = ({ section }) => {
                 value={inputMsg}
                 onChange={(e) => setInputMsg(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder={isPublicSection ? "Ask a question about X-rays..." : "Ask about this topic..."}
+                placeholder={isPublicSection ? "Ask a question..." : "Ask about this topic..."}
                 className="w-full pl-4 pr-12 py-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-rad-500 focus:bg-white transition-all text-sm"
               />
               <button 
