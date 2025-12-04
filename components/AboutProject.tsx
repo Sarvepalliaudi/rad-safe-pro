@@ -10,7 +10,7 @@ const AboutProject: React.FC = () => {
         <div className="inline-block p-4 bg-rad-50 rounded-full mb-4">
           <Award size={48} className="text-rad-600" />
         </div>
-        <h2 className="text-3xl font-extrabold text-slate-800 mb-2">Hackathon Project 2025</h2>
+        <h4 className="text-3xl font-extrabold text-slate-800 mb-2">Hackathon Project 2025-26</h4>
         <p className="text-rad-600 font-medium">Department of Allied Health Science & Engineering Technology</p>
       </div>
 
@@ -46,10 +46,38 @@ const AboutProject: React.FC = () => {
           </div>
         </div>
 
+      {/* Team Members List */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-green-200 border-l-4 border-l-green-500">
+        <h4 className="font-bold text-slate-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
+          <Users className="text-rad-600" size={20} />
+          <div>
+          <p className="font-bold text-slate-600" >Core Team Members </p>
+          <p className="text-xs text-green-600 font-medium mt-1">Idea & Medical Team</p>
+          </div>
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { name: "Keerthivasan J", dept: "Dept of RIT / AHS / DSU" },
+            { name: "Madhavan RD", dept: "Dept of RIT / AHS / DSU" },
+            { name: "Shalini M", dept: "Dept of RIT / AHS / DSU" },
+            { name: "Navya K", dept: "Dept of RIT / AHS / DSU" },
+            { name: "Thilakesh TM", dept: "Dept of BME / SET / DSU" }
+          ].map((member, idx) => (
+            <div key={idx} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+              <div className="w-2 h-2 rounded-full bg-green-400"></div>
+              <div>
+                <p className="font-semibold text-slate-700 text-sm">{member.name}</p>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wide">{member.dept}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
         {/* Developer Section */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-blue-500">
             <h4 className="flex items-center gap-2 font-bold text-slate-800 mb-4">
-                <Users className="text-blue-500" size={20} /> Lead Developer
+                <Users className="text-blue-500" size={20} /> Member & Developer
             </h4>
             <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
@@ -64,34 +92,9 @@ const AboutProject: React.FC = () => {
         </div>
       </div>
 
-      {/* Team Members List */}
-      <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h4 className="font-bold text-slate-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
-          <Users className="text-rad-600" size={20} /> Team Members
-        </h4>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { name: "Keerthivasan J", dept: "Dept of RIT / AHS / DSU" },
-            { name: "Madhavan RD", dept: "Dept of RIT / AHS / DSU" },
-            { name: "Shalini M", dept: "Dept of RIT / AHS / DSU" },
-            { name: "Navya K", dept: "Dept of RIT / AHS / DSU" },
-            { name: "Thilakesh TM", dept: "Dept of BME / SET / DSU" }
-          ].map((member, idx) => (
-            <div key={idx} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="w-2 h-2 rounded-full bg-rad-400"></div>
-              <div>
-                <p className="font-semibold text-slate-700 text-sm">{member.name}</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-wide">{member.dept}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="mt-8 text-center text-slate-400 text-xs">
         <p className="flex items-center justify-center gap-1">
-          <MapPin size={12} /> Designed & Developed at DSU Campus, Trichy
+          <MapPin size={20} /> Designed & Developed at Dhanalakshmi Srinivasan University Campus, Trichy , 621 112
         </p>
       </div>
     </div>
