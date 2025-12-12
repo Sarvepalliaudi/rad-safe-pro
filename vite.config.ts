@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    'process.env.API_KEY': JSON.stringify("AIzaSyCguModKDoD-yI9aD9tHPzLfiWw1pXfUpo"),
+  },
   build: {
     outDir: 'build',
   },

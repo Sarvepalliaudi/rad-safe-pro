@@ -147,23 +147,23 @@ const PatientPortal: React.FC = () => {
       audioRef.current = null;
     }
 
-    // Google Actions Sound Library (High availability, usually OGG)
-    // Fallback notes: If these fail, it might be browser compatibility (Safari).
+    // High-Quality MP3 Sources (Pixabay) - Reliable and loop-friendly
     const urls = {
-      ocean: "https://actions.google.com/sounds/v1/water/waves_crashing.ogg",
-      rain: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
-      forest: "https://actions.google.com/sounds/v1/ambiences/forest_morning.ogg"
+      ocean: "https://cdn.pixabay.com/audio/2022/10/24/audio_024b171577.mp3", // Ocean Waves
+      rain: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3",  // Soft Rain
+      forest: "https://cdn.pixabay.com/audio/2022/02/07/audio_65922383d4.mp3" // Forest Ambience
     };
 
     const audio = new Audio(urls[type]);
     audio.loop = true;
+    audio.volume = 0.5; // Comfortable volume
     
     // Add Error Handling
     audio.addEventListener('error', (e) => {
       console.error("Audio Load Error", e);
       setIsPlaying(false);
       setActiveAudio(null);
-      alert("Could not load audio. Your browser might not support this format (OGG) or the connection failed.");
+      alert("Could not load audio. Please check your internet connection.");
     });
 
     audioRef.current = audio;
