@@ -49,5 +49,9 @@ RAD SAFE PRO is a comprehensive, mobile-first educational platform designed for 
 - `src/constants.ts`: Static content (Questions, Lessons)
 - `src/types.ts`: TypeScript interfaces
 
+Project by 
+SARVEPALLI AUDI SIVA BHANUVARDHAN 
+DHANALAKSHMI SRINIVASAN UNIVERSITY, SAMAYAPURAM, TIRUCHIRAPALLI, TAMILNADU, 621 112
+
 ## 📄 License
 Educational Use Only. Not for clinical diagnostic purposes.
