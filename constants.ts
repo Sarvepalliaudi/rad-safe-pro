@@ -4,7 +4,7 @@ import { Section, QuizQuestion } from './types';
 export const APP_METADATA = {
   title: "RAD SAFE PRO",
   subtitle: "Your Smart Radiology Learning & Safety Assistant",
-  version: "3.0.0 (Pro)",
+  version: "3.1.0 (Public Edition)",
   downloads: [
     { label: "Download RAD SAFE PRO – Android APK", url: "https://example.com/radsafe.apk", icon: "Smartphone" },
     { label: "Download RAD SAFE PRO – Windows EXE", url: "https://example.com/radsafe.exe", icon: "Monitor" },
@@ -14,7 +14,7 @@ export const APP_METADATA = {
 };
 
 export const CONTENT_SECTIONS: Section[] = [
-  // Student Zone
+  // --- CORE PHYSICS ---
   {
     id: 'intro',
     title: '1. Rad Physics (Zero to Hero)',
@@ -23,18 +23,28 @@ export const CONTENT_SECTIONS: Section[] = [
     subsections: [
       {
         title: 'Atomic Structure & EMR',
-        body: 'To understand radiology, we must start with the atom.\n\n**The Atom:**\n• **Protons (+):** Determine the element (Z number).\n• **Neutrons (0):** Stability.\n• **Electrons (-):** Orbit in shells (K, L, M...). Binding energy is highest at the K-shell.\n\n**Electromagnetic Radiation (EMR):**\nX-rays are high-energy photons with no mass and no charge. They travel at the speed of light ($$c = 3 \\times 10^8 m/s$$).\n\n**Wave-Particle Duality:** X-rays behave like waves (wavelength) and particles (photons).'
+        body: '### The Fundamentals\nTo understand radiology, we must master the atom.\n\n**The Atom:**\n• **Protons (+):** Determine the element (Z number). Binding energy increases with Z.\n• **Neutrons (0):** Provide nuclear stability. Isotopes have different neutron counts.\n• **Electrons (-):** Orbit in shells (K, L, M...). K-shell has the highest binding energy (Tungsten K-shell: -69.5 keV).\n\n### Electromagnetic Radiation (EMR)\nX-rays are high-energy photons with no mass and no charge.\n\n**The Wave Equation:**\n$$c = \\lambda \\times \\nu$$\nWhere $c$ is speed of light ($3 \\times 10^8 m/s$), $\\lambda$ is wavelength, and $\\nu$ is frequency.\n\n**Energy Equation:**\n$$E = h \\times \\nu$$\nHigh frequency = High Energy = High Penetration.'
+      },
+      {
+        title: 'The X-Ray Circuit & Tube',
+        body: '### The X-Ray Tube Components\n1. **Cathode (-):** Contains the Tungsten filament. Uses **Thermionic Emission** to boil off electrons. The Focusing Cup (Nickel) keeps the electron cloud together.\n2. **Anode (+):** The target. Rotating anodes spread heat. Made of Tungsten-Rhenium alloy. The **Line Focus Principle** uses an angled target to maintain a large actual focal spot (for heat) but a small effective focal spot (for detail).\n3. **The Heel Effect:** X-ray intensity is higher on the Cathode side. Place the thickest part of the patient (e.g., Femur) under the Cathode.\n\n### The Circuit\n• **Rectification:** Converts AC to DC. High-frequency generators have <1% voltage ripple, providing constant X-ray production.'
       },
       {
         title: 'X-Ray Production',
-        body: 'X-rays are produced in the X-ray tube.\n\n**Requirements:**\n1. **Source of Electrons:** Heated filament (Cathode).\n2. **Acceleration:** High voltage (kVp).\n3. **Target:** Tungsten anode.\n\n**The Process:**\nElectrons slam into the target. 99% of energy becomes **HEAT**, 1% becomes **X-RAYS**.\n\n**Types of Production:**\n• **Bremsstrahlung (Braking):** Electron slows down near nucleus, emits photon.\n• **Characteristic:** Electron knocks out a K-shell electron. Cascade effect creates photon.'
+        body: 'When electrons slam into the anode, two things happen:\n\n### 1. Bremsstrahlung ("Braking") Radiation (>85%)\n• The electron passes near the nucleus, slows down, and changes course.\n• The lost kinetic energy becomes an X-ray photon.\n• **Spectrum:** Continuous (0 to kVp Peak).\n\n### 2. Characteristic Radiation (<15%)\n• An incident electron knocks out an inner-shell (K-shell) electron.\n• An outer-shell electron drops to fill the void, releasing specific energy.\n• **Spectrum:** Discrete spike. (Occurs only above 69 kVp for Tungsten).'
       },
       {
         title: 'Interactions with Matter',
-        body: 'What happens when X-rays hit the patient?\n\n1. **Photoelectric Effect:** Total absorption. Good for image contrast, but increases patient dose.\n2. **Compton Scatter:** Photon hits outer shell electron and changes direction. Reduces image quality (fog) and irradiates staff.\n3. **Coherent Scatter:** Low energy, vibrates atom, no ionization. Negligible in diagnostic ranges.'
+        body: 'What happens inside the patient?\n\n### 1. Photoelectric Effect (Absorption)\n• Photon strikes inner shell electron and is completely absorbed.\n• **Result:** Patient Dose + High Contrast (White on image).\n• Probability $\\propto Z^3 / E^3$. This is why bone (High Z) is white.\n\n### 2. Compton Scatter (Bad)\n• Photon hits outer shell electron, changes direction, and loses energy.\n• **Result:** Fog on image + Occupational Dose to staff.\n• **Prevention:** Collimation and Grids.\n\n### 3. Coherent Scatter\n• Low energy excitation. No ionization. Negligible in diagnostic imaging.'
+      },
+      {
+        title: 'Image Quality Factors',
+        body: '### 1. Receptor Exposure (Density)\nControlled by **mAs**. Too low = Quantum Mottle (Grainy). Too high = Saturation.\n\n### 2. Contrast\nControlled by **kVp** and Look-Up Tables (LUT). High kVp = Low Contrast (Long scale, many grays). Low kVp = High Contrast (Short scale, Black/White).\n\n### 3. Spatial Resolution (Detail)\n• **Focal Spot:** Small spot = Better detail.\n• **SID:** Long SID = Better detail.\n• **OID:** Short OID = Better detail.\n\n### 4. Distortion\n• **Magnification:** Caused by large OID or short SID.\n• **Elongation/Foreshortening:** Caused by tube or part misalignment.'
       }
     ]
   },
+  
+  // --- POSITIONING ---
   {
     id: 'positioning',
     title: '2. Positioning & Anatomy',
@@ -43,22 +53,28 @@ export const CONTENT_SECTIONS: Section[] = [
     subsections: [
       {
         title: 'General Principles',
-        body: '• **View:** The path of the beam (e.g., AP, PA).\n• **Position:** How the patient is placed (e.g., Supine, Prone).\n• **Marker:** Always place R/L marker on the cassette, never digitally add later if possible.\n• **Rule of Two:** 2 views at 90° to each other (AP/Lat) to see depth.'
+        body: '### Terminology\n• **Projection:** Path of the beam (e.g., AP, PA).\n• **View:** How the image looks.\n• **Decubitus:** Patient lying down, beam horizontal (for air-fluid levels).\n\n### Golden Rules\n1. **Two Views:** Always take 2 views at 90° (AP & Lateral) to localize pathology.\n2. **Joints:** Include the joint nearest the injury. For long bones, include both joints.\n3. **Markers:** Physical L/R markers are mandatory legal requirements.'
       },
       {
-        title: 'Upper Limb',
-        body: '**Hand:**\n• PA, Oblique, Lateral (Fan fingers).\n• Center at 3rd MCP joint.\n\n**Wrist:**\n• PA, Lateral, Scaphoid view (Ulnar deviation).\n• Center mid-carpals.\n\n**Elbow:**\n• AP (Fully extended), Lateral (Flex 90°).\n• Check for fat pad signs in trauma.'
+        title: 'Chest & Abdomen',
+        body: '### CXR (PA View)\n• **Tech:** 110-120 kVp, 72" SID.\n• **Position:** Chin up, shoulders rolled forward (scapula out), hands on hips.\n• **Breathing:** 2nd full inspiration (depress diaphragm).\n• **Critique:** 10 posterior ribs visible above diaphragm. Clavicles equidistant.\n\n### Abdomen (KUB)\n• **Tech:** 70-80 kVp, 40" SID.\n• **Landmark:** Iliac Crest.\n• **Must Include:** Symphysis pubis to upper kidney pole.\n• **Breathing:** Expiration (elevates diaphragm).'
       },
       {
-        title: 'Chest X-Ray (CXR)',
-        body: 'The most common exam.\n\n**PA View:**\n• Patient erect, chest against bucky.\n• Roll shoulders forward (move scapulae out of lung fields).\n• Deep inspiration (depress diaphragm).\n• **Why PA?** Reduces heart magnification (Heart is closer to film).\n\n**Lateral:**\n• Left side against bucky (Left lateral) to reduce heart mag.'
+        title: 'Upper Extremity',
+        body: '### Hand\n• **Views:** PA, Oblique (fan fingers), Lateral (fan or extension).\n• **Center:** 3rd MCP joint.\n\n### Wrist\n• **Views:** PA, Lateral, Oblique.\n• **Scaphoid View:** Ulnar deviation to elongate scaphoid (most common #).\n\n### Elbow\n• **AP:** Arm fully extended. Condyles parallel to film.\n• **Lateral:** Flex 90°. Thumb up. Condyles perpendicular. Look for "Fat Pad Sign".'
       },
       {
-        title: 'Spine',
-        body: '**C-Spine:**\n• AP Open Mouth (Odontoid).\n• AP Axial (15° cephalad).\n• Lateral (Must see C7-T1 junction).\n\n**L-Spine:**\n• AP, Lateral (Spot L5-S1).\n• Check for "Scottie Dog" on Obliques (Pars interarticularis).'
+        title: 'Lower Extremity',
+        body: '### Foot\n• **AP:** Angling tube 10° toward heel (posteriorly) to open TMT joints.\n• **Oblique:** Medial rotation 30°.\n\n### Ankle\n• **Mortise View:** Internally rotate leg 15-20°. This opens the lateral and medial malleoli joint spaces.\n• **Lateral:** Include base of 5th metatarsal (Jones fracture).\n\n### Knee\n• **AP:** CR angle depends on ASIS measurement (<19cm: 5° caudad, >24cm: 5° cephalad).\n• **Lateral:** Flex knee 20-30°. CR 5-7° cephalad to superimpose condyles.'
+      },
+      {
+        title: 'Spine Imaging',
+        body: '### Cervical Spine\n• **Open Mouth (Odontoid):** "Ahh" to depress tongue. Visualizes C1-C2 dens.\n• **Lateral:** 72" SID to reduce magnification. Must see C7-T1 junction (Swimmer\'s view if needed).\n\n### Lumbar Spine\n• **AP:** Knees flexed to flatten lordosis.\n• **Oblique:** "Scottie Dog" sign. Nose = Transverse Process, Eye = Pedicle, Neck = Pars Interarticularis (Spondylolysis check).'
       }
     ]
   },
+
+  // --- SAFETY ---
   {
     id: 'safety',
     title: '3. Radiobiology & Protection',
@@ -67,18 +83,24 @@ export const CONTENT_SECTIONS: Section[] = [
     subsections: [
       {
         title: 'Biological Effects',
-        body: 'Ionizing radiation damages DNA.\n\n**Direct Effect:** Photon hits DNA directly.\n**Indirect Effect:** Photon hits water ($$H_2O$$), creates free radicals (Radiolysis of water), which damage DNA. This is more common.\n\n**Stochastic Effects:** Probability increases with dose (Cancer, Genetic). No threshold.\n**Deterministic Effects:** Severity increases with dose (Skin burns, Cataracts). Has a threshold.'
+        body: '### Direct vs Indirect\n• **Direct:** X-ray hits DNA. Rare.\n• **Indirect:** X-ray hits Water ($H_2O$) -> Radiolysis -> Free Radicals ($H_2O_2$) -> DNA damage. Most common.\n\n### Sensitivity (Law of Bergonie & Tribondeau)\nCells are most sensitive if they are:\n1. Rapidly dividing.\n2. Undifferentiated (Stem cells).\n3. Have a long mitotic future.\n**Most Sensitive:** Lymphocytes, Spermatogonia.\n**Least Sensitive:** Nerve, Muscle.'
       },
       {
-        title: 'The ALARA Principle',
-        body: '**As Low As Reasonably Achievable**\n\n1. **Time:** Minimize beam-on time. (Fluoroscopy: use pulsed mode).\n2. **Distance:** The most effective tool. Inverse Square Law ($$I \\propto 1/d^2$$).\n3. **Shielding:** Lead aprons, thyroid collars, structural barriers.'
+        title: 'Dose Limits (NCRP)',
+        body: '### Occupational Limits\n• **Annual:** 50 mSv (5 rem).\n• **Cumulative:** $10 \\text{ mSv} \\times \\text{Age}$.\n• **Lens of Eye:** 150 mSv.\n\n### Public Limits\n• **Annual:** 1 mSv (frequent exposure).\n\n### Embryo/Fetus\n• **Total Gestation:** 5 mSv.\n• **Monthly:** 0.5 mSv.'
       },
       {
-        title: 'Dose Limits (ICRP)',
-        body: '• **Occupational:** 20 mSv/year (avg over 5 years), max 50 mSv in one year.\n• **Public:** 1 mSv/year.\n• **Fetus:** 1 mSv total gestation.\n• **Lens of Eye:** 20 mSv/year.'
+        title: 'Monitoring Devices',
+        body: '### OSL (Optically Stimulated Luminescence)\n• Uses Aluminum Oxide ($Al_2O_3$).\n• Read by Laser.\n• Can be re-read. Sensitive to 1 mrem.\n\n### TLD (Thermo-Luminescent Dosimeter)\n• Uses Lithium Fluoride (LiF).\n• Read by Heat.\n• Resembles tissue effective Z.'
+      },
+      {
+        title: 'ALARA in Practice',
+        body: '### 1. Time\nMinimize "beam-on" time. Use "Last Image Hold" in fluoro.\n\n### 2. Distance (Most Effective)\n**Inverse Square Law:** Doubling distance reduces dose to 1/4.\n$$I_1/I_2 = (D_2)^2 / (D_1)^2$$\n\n### 3. Shielding\n• **Aprons:** 0.5mm Pb eq usually.\n• **Primary Barrier:** Blocks direct beam (1/16" Pb).\n• **Secondary Barrier:** Blocks scatter/leakage (1/32" Pb).'
       }
     ]
   },
+
+  // --- MODALITIES ---
   {
     id: 'modalities',
     title: '4. Advanced Modalities',
@@ -87,56 +109,75 @@ export const CONTENT_SECTIONS: Section[] = [
     subsections: [
       {
         title: 'Computed Tomography (CT)',
-        body: '**Concept:** X-ray tube rotates around patient. Detectors measure attenuation. Computer reconstructs slice.\n\n**Generations:** Modern scanners are "Helical/Spiral" (Continuous table movement + continuous rotation).\n\n**Hounsfield Units (HU):**\n• Air: -1000\n• Water: 0\n• Bone: +400 to +1000\n\n**Windowing:** Adjusting contrast (Window Width) and brightness (Window Level) to see specific tissues.'
+        body: '### Principles\n• **Gantry:** Houses tube and detectors.\n• **Helical Scan:** Continuous table feed + slip-ring rotation.\n• **Pitch:** Table movement per rotation / Beam width. Pitch > 1 lowers dose but lowers resolution.\n\n### Image Data\n• **Voxel:** Volume element (3D).\n• **Hounsfield Units (HU):**\n  - Bone: +1000\n  - Water: 0\n  - Fat: -100\n  - Air: -1000\n• **Windowing:** "Window Width" controls contrast (gray scale). "Window Level" controls brightness (center HU).'
       },
       {
-        title: 'MRI (Magnetic Resonance)',
-        body: '**No Ionizing Radiation.** Uses strong magnetic fields and Radiofrequency (RF) pulses.\n\n**Physics:**\n1. Protons align with $B_0$ field.\n2. RF pulse flips protons.\n3. RF off -> Protons relax, emitting signal.\n\n**Weighting:**\n• **T1:** Fluid is dark. Good for Anatomy.\n• **T2:** Fluid is bright. Good for Pathology.\n\n**Safety:** PROJECTILE HAZARD. No ferromagnetic objects.'
+        title: 'MRI Physics',
+        body: '### How it Works\n1. Strong magnet ($B_0$) aligns Hydrogen protons.\n2. RF pulse flips them.\n3. Proton relaxation emits signal.\n\n### Sequences\n• **T1 Weighted:** Fat is Bright. Water is Dark. Good for anatomy.\n• **T2 Weighted:** Water is Bright (WW2 - Water White T2). Good for pathology/edema.\n• **Safety:** The magnet is ALWAYS ON. No pacemakers, cochlear implants, or ferrous metal.'
       },
       {
-        title: 'Ultrasound (USG)',
-        body: '**Piezoelectric Effect:** Crystals in transducer convert electricity to sound waves and vice versa.\n\n**Frequency:**\n• High Freq (Linear probe): Better resolution, less penetration (Thyroid, Vascular).\n• Low Freq (Curved probe): Better penetration, less resolution (Abdomen, OBGYN).\n\n**Echogenicity:**\n• Anechoic (Black): Fluid.\n• Hyperechoic (White): Bone/Stones.'
+        title: 'Fluoroscopy',
+        body: '### Image Intensifier (II)\nConverts weak X-rays into bright visible light.\n1. **Input Phosphor (CsI):** X-ray -> Light.\n2. **Photocathode:** Light -> Electrons.\n3. **Electrostatic Lenses:** Focus electrons.\n4. **Output Phosphor (ZnCdS):** Electrons -> Bright Light.\n\n### Magnification Mode\nFocuses electrons on smaller input area. **Result:** Better resolution, but HIGHER patient dose.'
       }
     ]
   },
+
+  // --- PROCEDURES ---
   {
     id: 'procedures',
-    title: '5. Contrast & Procedures',
+    title: '5. Patient Care & Procedures',
     category: 'advanced',
     icon: 'FlaskConical',
     subsections: [
       {
-        title: 'Contrast Media',
-        body: '**Negative Contrast:** Air/Gas (appears black).\n**Positive Contrast:** Barium, Iodine (appears white).\n\n**Iodinated Contrast:**\n• Used in CT/IVU.\n• **Risk:** Contrast Induced Nephropathy (CIN) and Anaphylaxis.\n• **Check:** Creatinine levels before injection.'
+        title: 'Vital Signs & Emergency',
+        body: '### Normal Ranges (Adult)\n• **BP:** 120/80 mmHg.\n• **Pulse:** 60-100 bpm.\n• **Respiration:** 12-20 bpm.\n• **Temp:** 98.6°F (37°C).\n\n### Shock Types\n• **Hypovolemic:** Loss of blood/fluid.\n• **Anaphylactic:** Allergic reaction (Vasodilation).\n• **Cardiogenic:** Heart failure.\n• **Neurogenic:** Spinal cord injury.'
       },
       {
-        title: 'Common Procedures',
-        body: '• **IVU (Intravenous Urogram):** Kidney function/stones.\n• **RGU/MCU:** Urethra/Bladder.\n• **Barium Swallow:** Esophagus.\n• **Angiography:** Blood vessels (Interventional).'
+        title: 'Contrast Media',
+        body: '### Iodinated Contrast\n• **Ionic:** High osmolality (dissociates). More reactions.\n• **Non-Ionic:** Low osmolality. Safer, costs more.\n\n### Reactions\n• **Mild:** Hives, warmth, metal taste. (Monitor).\n• **Moderate:** Tachycardia, swelling. (Medical assistance).\n• **Severe:** Anaphylaxis, cardiac arrest. (Code Blue, Epinephrine).\n• **Pre-check:** BUN (8-25) and Creatinine (0.6-1.5).'
+      },
+      {
+        title: 'Aseptic Technique',
+        body: '• **Medical Asepsis:** Reducing pathogens (Hand washing, sanitizing).\n• **Surgical Asepsis:** Removing ALL microorganisms (Sterile field).\n• **Sterile Field Rules:**\n  - Never turn your back on a sterile field.\n  - Only sterile items touch sterile items.\n  - 1-inch border is considered unsterile.'
       }
     ]
   },
-  // Public Awareness Division
+  
+  // --- PUBLIC AWARENESS (EXPANDED) ---
   {
     id: 'awareness',
-    title: 'Public Awareness & Safety',
+    title: 'Public Awareness & Safety / பொது விழிப்புணர்வு',
     category: 'public',
     icon: 'HeartHandshake',
     subsections: [
       {
-        title: 'Radiation in Daily Life',
-        body: 'You might be surprised to learn that radiation is a natural part of our world. It is not just in hospitals.\n\n**The Banana Analogy:**\nDid you know bananas contain Potassium-40, a radioactive isotope? Eating one banana exposes you to about **0.1 micro-Sieverts (µSv)** of radiation. This is completely harmless!\n\n**Flight Analogy:**\nA flight from New York to London exposes passengers to about **80 µSv** of cosmic radiation from space. This is roughly the same dose as a standard Chest X-ray.\n\n$$ \\text{1 Chest X-Ray} \\approx \\text{1 Transatlantic Flight} \\approx \\text{800 Bananas} $$\n\n**Conclusion:**\nThe small amounts of radiation used in X-rays are comparable to risks we accept in everyday life.'
+        title: '☢️ Understanding Radiation (English)',
+        body: '### What is Radiation?\nRadiation is simply energy that travels as waves or particles. It is part of our natural environment.\n\n**Types:**\n1. **Non-Ionizing (Safe):** Radio waves, Microwaves, Visible light, Wi-Fi. These **cannot** damage DNA.\n2. **Ionizing (Use with Care):** X-rays, Gamma rays. These can remove electrons from atoms, so we use them carefully.\n\n### Daily Exposure\nYou are exposed to background radiation every day from:\n• The Sun (Cosmic radiation).\n• The Earth (Radon gas in soil).\n• Food (Bananas contain Potassium-40).\n\n**Comparison:**\n• 1 Chest X-ray $\\approx$ 10 days of natural background radiation.\n• 1 Flight (India to USA) $\\approx$ 5-8 Chest X-rays.'
       },
       {
-        title: 'X-ray Myths vs. Facts',
-        body: '**Myth 1: "I will be radioactive after an X-ray."**\n**Fact:** FALSE. X-rays are like light bulbs. When the switch is off, the light (radiation) is gone. You are **not** radioactive and can safely hug your children immediately.\n\n**Myth 2: "Lead aprons are 100% impenetrable."**\n**Fact:** Lead aprons drastically reduce exposure (by ~90-95%) but do not block 100%. This is why we also use distance and time to keep you safe.\n\n**Myth 3: "I will set off metal detectors at the airport."**\n**Fact:** No. Medical radiation does not linger in your body. Only nuclear medicine (which involves injections) might trigger sensitive detectors for a short time.'
+        title: '☢️ கதிர்வீச்சு என்றால் என்ன? (Tamil)',
+        body: '### அறிமுகம்\nகதிர்வீச்சு (Radiation) என்பது அலைகள் அல்லது துகள்களாக பயணிக்கும் ஆற்றல். இது நமது இயற்கையான சூழலின் ஒரு பகுதியாகும்.\n\n### கதிர்வீச்சு வகைகள்\n1. **அயனியாக்காத கதிர்வீச்சு (பாதுகாப்பானது):** ரேடியோ அலைகள், மைக்ரோவேவ், செல்போன், சாதாரண வெளிச்சம். இவை ஆபத்தானவை அல்ல.\n2. **அயனியாக்கும் கதிர்வீச்சு (கவனிக்க வேண்டியவை):** எக்ஸ்-கதிர்கள் (X-rays), காமா கதிர்கள். இவற்றை நாம் மருத்துவ தேவைக்கு மட்டுமே பயன்படுத்துகிறோம்.\n\n### அன்றாட வாழ்வில் கதிர்வீச்சு\nநாம் தினமும் இயற்கையிலிருந்து கதிர்வீச்சை பெறுகிறோம்:\n• சூரியன் (காஸ்மிக் கதிர்கள்)\n• பூமி (மண்ணில் உள்ள ரேடான்)\n• உணவு (வாழைப்பழத்தில் பொட்டாசியம்-40 உள்ளது)\n\n**ஒப்பீடு:**\n• ஒரு நெஞ்சு எக்ஸ்-ரே = 10 நாட்கள் இயற்கையான கதிர்வீச்சுக்கு சமம்.'
       },
       {
-        title: 'Pregnancy & Children Safety',
-        body: '**"Image Gently" Campaign:**\nRadiologists follow strict protocols for children. We "child-size" the dose, meaning we use much less electricity for a small child than for an adult.\n\n**If You Are Pregnant:**\n1. **Tell us first:** We might switch to Ultrasound or MRI (no radiation).\n2. **Shielding:** If an X-ray is necessary, we place a lead apron over your abdomen to protect the baby.\n3. **Risk:** The risk to the fetus from a diagnostic X-ray (like a wrist or ankle) is extremely low, but we avoid abdominal shots whenever possible.\n\n**Visual Tip:**\nImagine a "Shield" icon. That is what we do—we shield the parts of the body that do not need to be imaged.'
+        title: '🚫 Myth Busters: Common Fears (English)',
+        body: '### Myth 1: "I will be radioactive/glow after an X-ray."\n**Fact:** **FALSE.** X-rays are like light from a bulb. Once the switch is off, it is gone instantly. You do **not** carry any radiation. You can safely hug children or babies immediately.\n\n### Myth 2: "Technologists leave the room because it\'s deadly."\n**Fact:** **Context Matters.** You get an X-ray once a year. The technologist takes 50+ X-rays daily. They leave to avoid **cumulative** exposure over 30 years of work, not because a single X-ray is dangerous to you.\n\n### Myth 3: "MRI uses heavy radiation."\n**Fact:** **FALSE.** MRI uses **Magnets** and **Radio Waves**. It has ZERO radiation. It is completely safe, even for children.\n\n### Myth 4: "X-rays cause immediate hair loss."\n**Fact:** **FALSE.** Diagnostic X-rays (Chest, bone) are too weak for this. Only high-dose Radiation Therapy (for cancer treatment) causes hair loss.\n\n### Myth 5: "Mobile phones cause cancer like X-rays."\n**Fact:** **FALSE.** Mobiles use radio waves (non-ionizing). There is no proven link to DNA damage.'
       },
       {
-        title: 'What to Expect During Your Scan',
-        body: 'Feeling nervous? Here is a simple walkthrough of your visit:\n\n**Step 1: Preparation**\nYou may be asked to change into a gown and remove jewelry or metal (zippers, bras with wires). Metal shows up as white streaks on X-rays.\n\n**Step 2: Positioning**\nThe technologist will place you in a specific pose. It might feel firm or uncomfortable, but it only lasts seconds. "Hold your breath" helps stop motion blur.\n\n**Step 3: The Exposure**\nYou will hear a **"Beep"** or whirring sound. You won\'t feel anything. It is completely painless.\n\n**Step 4: Done!**\nThe technologist checks the image quality. You can usually leave immediately. The radiologist (doctor) will review the pictures and send a report to your physician.'
+        title: '🚫 கட்டுக்கதைகள் vs உண்மைகள் (Tamil)',
+        body: '### கட்டுக்கதை 1: "எக்ஸ்-ரே எடுத்த பிறகு என் உடலில் கதிர்வீச்சு தங்கிவிடுமா?"\n**உண்மை:** **இல்லை.** எக்ஸ்-ரே என்பது கேமரா ஃபிளாஷ் போன்றது. சுவிட்சை அணைத்தவுடன் அது மறைந்துவிடும். உங்கள் உடலில் கதிர்வீச்சு தங்காது. பரிசோதனைக்குப் பிறகு நீங்கள் குழந்தைகளை தாராளமாக நெருங்கலாம்.\n\n### கட்டுக்கதை 2: "மருத்துவர்கள் ஏன் அறையை விட்டு வெளியேறுகிறார்கள்?"\n**உண்மை:** உங்களுக்கு எக்ஸ்-ரே எப்போதாவது ஒருமுறை தான் எடுக்கப்படுகிறது. ஆனால் மருத்துவர்கள் தினமும் நூற்றுக்கணக்கான எக்ஸ்-ரே எடுக்கிறார்கள். அவர்கள் தங்கள் வாழ்நாள் முழுவதும் சேரும் கதிர்வீச்சை தவிர்க்கவே வெளியேறுகிறார்கள்.\n\n### கட்டுக்கதை 3: "எம்.ஆர்.ஐ (MRI) ஸ்கேனில் அதிக கதிர்வீச்சு உள்ளதா?"\n**உண்மை:** **இல்லை.** எம்.ஆர்.ஐ காந்த அலைகளை (Magnets) பயன்படுத்துகிறது. இதில் கதிர்வீச்சு ஆபத்து இல்லை.\n\n### கட்டுக்கதை 4: "எக்ஸ்-ரே எடுத்தால் முடி கொட்டுமா?"\n**உண்மை:** **இல்லை.** சாதாரண எக்ஸ்-ரே கதிர்களால் முடி கொட்டாது. புற்றுநோய் சிகிச்சைக்கான கதிர்வீச்சு மட்டுமே அதிக சக்தி வாய்ந்தது.'
+      },
+      {
+        title: '🚫 मिथक और सच्चाई (Hindi)',
+        body: '### मिथक 1: "एक्स-रे के बाद मेरा शरीर रेडियोधर्मी हो जाएगा।"\n**सच्चाई:** गलत। एक्स-रे रोशनी की तरह होता है। मशीन बंद होते ही यह खत्म हो जाता है। आप तुरंत अपने परिवार के साथ रह सकते हैं।\n\n### मिथक 2: "डॉक्टर कमरे से बाहर क्यों जाते हैं?"\n**सच्चाई:** आपको साल में एक बार एक्स-रे कराना होता है, लेकिन डॉक्टर रोज 50+ एक्स-रे करते हैं। वे अपनी सुरक्षा के लिए बाहर जाते हैं ताकि उन्हें जीवन भर विकिरण न लगे।\n\n### मिथक 3: "MRI में बहुत विकिरण होता है।"\n**सच्चाई:** गलत। MRI चुंबक (Magnet) का उपयोग करता है। इसमें कोई विकिरण नहीं होता है।'
+      },
+      {
+        title: '🤰 Pregnancy & Women\'s Safety',
+        body: '### English Guide\n• **Inform First:** Always tell the technologist if there is **any chance** you might be pregnant.\n• **The 10-Day Rule:** Elective abdominal X-rays are best done in the first 10 days of your menstrual cycle (when pregnancy is least likely).\n• **Shielding:** If an X-ray is necessary (e.g., trauma), we cover the abdomen with a lead apron to protect the baby.\n• **Breastfeeding:** Diagnostic X-rays and CT scans do **not** affect breast milk. You can feed your baby immediately after.\n\n### தமிழ் வழிகாட்டி (Tamil Guide)\n• **தெரிவிக்கவும்:** நீங்கள் கர்ப்பமாக இருக்க வாய்ப்பு இருந்தால், உடனே மருத்துவரிடம் கூறவும்.\n• **பாதுகாப்பு:** அவசியம் எக்ஸ்-ரே எடுக்க நேர்ந்தால், குழந்தையின் பாதுகாப்பிற்கு "ஈய உடை" (Lead Apron) வழங்கப்படும்.\n• **தாய்ப்பால்:** எக்ஸ்-ரே மற்றும் சிடி ஸ்கேன் கதிர்கள் தாய்ப்பாலை பாதிக்காது. பரிசோதனை முடிந்தவுடன் நீங்கள் குழந்தைக்கு பாலூட்டலாம்.'
+      },
+      {
+        title: '🛡️ Your Rights as a Patient',
+        body: '### Always Ask For:\n1. **Lead Apron:** When getting a dental or extremity X-ray, ask for a shield for your body.\n2. **Thyroid Shield:** Protects your thyroid gland.\n3. **Justification:** Ask "Is this scan absolutely necessary?"\n\n### Avoid Repetition\nBring your old reports and X-ray films to new doctors. This stops them from ordering the same scan again!'
       }
     ]
   }

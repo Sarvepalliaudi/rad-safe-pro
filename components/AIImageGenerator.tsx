@@ -13,7 +13,7 @@ const AIImageGenerator: React.FC = () => {
   const user = getUserProfile();
 
   // If user is not Pro (e.g. didn't log in with Google), show strict gate
-  if (!user.isPro && user.role !== 'officer') { // Officers get it too for demo
+  if (!user.isPro && user.role !== 'radiology_officer') { // Officers get it too for demo
     return (
       <div className="max-w-2xl mx-auto text-center p-12 bg-white rounded-2xl shadow-sm border border-gray-200">
         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">

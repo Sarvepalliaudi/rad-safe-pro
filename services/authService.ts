@@ -1,89 +1,115 @@
 
 import { UserProfile, UserRole } from '../types';
-import { getInitialProfile } from './userService';
+import { getInitialProfile, logUserActivity } from './userService';
 
 const USERS_DB_KEY = 'rad_safe_users_db';
 const SESSION_KEY = 'rad_safe_session';
 
-// Helper to simulate network delay
+// Helper to simulate network delay for database connection
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export const registerUser = async (email: string, password: string, name: string, role: UserRole): Promise<UserProfile> => {
-  await delay(800); // Fake network loading
-  
-  const usersStr = localStorage.getItem(USERS_DB_KEY);
-  const users = usersStr ? JSON.parse(usersStr) : [];
+// NOTE: Direct registration/login functions are removed/deprecated in UI favor of Google Login
+// Keeping stubs for type safety if needed elsewhere, but logic moved to loginWithGoogle
 
-  // Check if user exists
-  if (users.find((u: any) => u.email === email)) {
-    throw new Error("User already exists with this email.");
+export const loginWithGoogle = async (
+  selectedRole: UserRole, 
+  additionalData?: { studentId?: string; collegeName?: string; licenseId?: string }
+): Promise<UserProfile> => {
+  await delay(2000); // Simulate secure database handshake
+
+  // 1. Simulate getting user info from Google
+  const googleEmail = `user_${Math.floor(Math.random() * 1000)}@gmail.com`;
+  const googleName = selectedRole === 'admin' ? "System Admin" : "Google User";
+  
+  // 2. Check internal DB for this Google User
+  const usersStr = localStorage.getItem(USERS_DB_KEY);
+  let users = usersStr ? JSON.parse(usersStr) : [];
+  
+  let userRecord = users.find((u: any) => u.email === googleEmail);
+  let profile: UserProfile;
+
+  if (userRecord) {
+    // User exists in DB
+    profile = userRecord.profile;
+    
+    // Update role and data on re-login (Crucial for role switching)
+    profile.role = selectedRole; 
+    if (additionalData) {
+      profile.studentId = additionalData.studentId;
+      profile.collegeName = additionalData.collegeName;
+      profile.licenseId = additionalData.licenseId;
+    }
+    
+    // SAVE UPDATES TO DB
+    // We must update the record in the users array and save it back
+    // (This was missing in the previous version)
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+
+  } else {
+    // New Google User - Create DB Entry
+    profile = {
+      ...getInitialProfile(),
+      id: 'google_' + Date.now(),
+      email: googleEmail,
+      name: googleName,
+      role: selectedRole,
+      isPro: true, // Google users get Pro perks
+      ...additionalData
+    };
+    users.push({ email: googleEmail, googleId: profile.id, profile });
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+    logUserActivity(profile.id, profile.name, profile.email, 'REGISTER');
   }
 
-  // Create new profile based on role
-  const baseProfile = getInitialProfile();
-  const newProfile: UserProfile = {
-    ...baseProfile,
-    id: Date.now().toString(),
-    email,
-    name,
-    role,
-    isPro: false // Standard registration is not Pro
-  };
-
-  // Store user with password (In real app, hash this!)
-  const newUserRecord = {
-    email,
-    password, 
-    profile: newProfile
-  };
-
-  users.push(newUserRecord);
-  localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+  // 3. Establish Session with STRICT EXPIRY
+  // Admin: 15 minutes (Strict Re-auth), Others: 24 hours
+  const expiryDuration = selectedRole === 'admin' ? 15 * 60 * 1000 : 24 * 60 * 60 * 1000;
   
-  // Auto login
-  localStorage.setItem(SESSION_KEY, JSON.stringify(newProfile));
-  
-  return newProfile;
-};
-
-export const loginUser = async (email: string, password: string): Promise<UserProfile> => {
-  await delay(800);
-
-  const usersStr = localStorage.getItem(USERS_DB_KEY);
-  const users = usersStr ? JSON.parse(usersStr) : [];
-
-  const user = users.find((u: any) => u.email === email && u.password === password);
-
-  if (!user) {
-    throw new Error("Invalid email or password.");
-  }
-
-  localStorage.setItem(SESSION_KEY, JSON.stringify(user.profile));
-  return user.profile;
-};
-
-export const loginWithGoogle = async (): Promise<UserProfile> => {
-  await delay(1500); // Simulate popup and OAuth
-
-  // Mock a Google User - AUTO PRO STATUS for Hackathon demo
-  const googleProfile: UserProfile = {
-    ...getInitialProfile(),
-    id: 'google_user_' + Date.now(),
-    email: 'google_user@gmail.com',
-    name: 'Google User',
-    role: 'student',
-    isPro: true // Google Users get Pro features (Image Gen)
+  const sessionData = {
+    profile,
+    expiry: Date.now() + expiryDuration
   };
 
-  localStorage.setItem(SESSION_KEY, JSON.stringify(googleProfile));
-  return googleProfile;
+  localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+  
+  // 4. Log the Login Event
+  logUserActivity(profile.id, profile.name, profile.email, 'LOGIN');
+
+  return profile;
 };
 
 export const logoutUser = () => {
+  const sessionStr = localStorage.getItem(SESSION_KEY);
+  if (sessionStr) {
+    try {
+      const parsed = JSON.parse(sessionStr);
+      const profile = parsed.profile || parsed;
+      logUserActivity(profile.id, profile.name, profile.email, 'LOGOUT');
+    } catch (e) {}
+  }
   localStorage.removeItem(SESSION_KEY);
 };
 
 export const getCurrentSession = (): UserProfile | null => {
   const sessionStr = localStorage.getItem(SESSION_KEY);
-  return sessionStr ? JSON.parse(sessionStr) : null;
+  if (!sessionStr) return null;
+
+  try {
+    const parsed = JSON.parse(sessionStr);
+
+    // Handle Wrapped Session with Expiry
+    if (parsed.profile && parsed.expiry) {
+      if (Date.now() > parsed.expiry) {
+        // Session Expired
+        localStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+      return parsed.profile;
+    }
+    
+    // Fallback for old session format
+    return parsed;
+  } catch (e) {
+    return null;
+  }
 };

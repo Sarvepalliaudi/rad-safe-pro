@@ -10,7 +10,7 @@ export interface Section {
 
 export type QuizCategory = 'All' | 'Radiology Basics' | 'Safety & ALARA' | 'Anatomy Spotters' | 'Physics' | 'Modalities' | 'Positioning';
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
-export type UserRole = 'student' | 'patient' | 'public' | 'officer';
+export type UserRole = 'student' | 'patient' | 'public' | 'radiology_officer' | 'admin';
 
 export interface QuizQuestion {
   id: number;
@@ -32,7 +32,8 @@ export enum CalculatorType {
   INVERSE_SQUARE = 'INVERSE_SQUARE',
   MAS_RECIPROCITY = 'MAS_RECIPROCITY',
   SHIELDING = 'SHIELDING',
-  EXPOSURE_TIME = 'EXPOSURE_TIME'
+  EXPOSURE_TIME = 'EXPOSURE_TIME',
+  UNIT_CONVERTER = 'UNIT_CONVERTER'
 }
 
 export type ViewState = 'START' | 'AUTH' | 'DASHBOARD' | 'SECTION';
@@ -52,13 +53,17 @@ export interface UserProfile {
   email: string;
   name: string;
   role: UserRole;
-  isPro: boolean; // New field for Pro features
+  isPro: boolean;
   level: number;
   currentXp: number;
   totalXp: number;
   nextLevelXp: number;
   quizzesTaken: number;
   history: QuizResult[];
+  // Verification Fields
+  studentId?: string;
+  collegeName?: string;
+  licenseId?: string;
 }
 
 export interface ChatMessage {
@@ -66,4 +71,14 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   timestamp: number;
+}
+
+export interface ActivityLog {
+  id: string;
+  userId: string;
+  userName: string;
+  email: string;
+  action: 'LOGIN' | 'LOGOUT' | 'REGISTER';
+  timestamp: number;
+  device?: string;
 }

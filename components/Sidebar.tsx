@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { 
-  BookOpen, Atom, Ruler, ShieldAlert, Scan, FlaskConical, Move, BrainCircuit, Calculator, HelpCircle, X, Eye, HeartHandshake, LogOut, User, Sparkles
+  BookOpen, Atom, Ruler, ShieldAlert, Scan, FlaskConical, Move, BrainCircuit, Calculator, HelpCircle, X, Eye, HeartHandshake, LogOut
 } from 'lucide-react';
 import { Section, UserRole } from '../types';
 import { getUserProfile } from '../services/userService';
@@ -44,9 +44,20 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, activeSection, onSelectSect
   };
 
   const filteredSections = sections.filter(s => {
-    if (role === 'student') return true;
+    // Admin sees everything
+    if (role === 'admin') return true;
+
+    // Public/Patients only see Public Awareness
     if (role === 'patient' || role === 'public') return s.category === 'public';
-    if (role === 'officer') return s.category !== 'public';
+    
+    // Radiology Officers see everything except maybe basic positioning (tech work), similar to previous Officer role
+    // But they might want reference, so we'll keep it open or restricted based on preference. 
+    // Previous logic: hidden 'positioning' for officers.
+    if (role === 'radiology_officer') {
+       return s.id !== 'positioning'; 
+    }
+    
+    // Students see everything
     return true;
   });
 
@@ -62,8 +73,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, activeSection, onSelectSect
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-rad-400 to-rad-200 bg-clip-text text-transparent">RAD SAFE PRO</h1>
             <div className="flex items-center gap-1 mt-1">
-              <span className={`w-2 h-2 rounded-full ${role === 'student' ? 'bg-green-400' : 'bg-orange-400'}`}></span>
-              <p className="text-xs text-slate-400 capitalize">{role} Mode</p>
+              <span className={`w-2 h-2 rounded-full ${role === 'student' ? 'bg-green-400' : role === 'admin' ? 'bg-red-500' : role === 'radiology_officer' ? 'bg-blue-400' : 'bg-orange-400'}`}></span>
+              <p className="text-xs text-slate-400 capitalize">{role.replace('_', ' ')} Mode</p>
               {isPro && <span className="ml-1 px-1 bg-yellow-500 text-black text-[9px] font-bold rounded">PRO</span>}
             </div>
           </div>
@@ -105,25 +116,23 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, activeSection, onSelectSect
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">Tools</p>
               <ul className="space-y-1">
-                 {(role === 'student' || role === 'officer') && (
+                 {/* Calculator: Students, Officers, Admins */}
+                 {(role === 'student' || role === 'radiology_officer' || role === 'admin') && (
                    <li>
                       <button onClick={() => onSelectSection('calculator')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
                         <Calculator size={18} className="text-emerald-400" /> Dose Calculator
                       </button>
                    </li>
                  )}
+                 
+                 {/* AI Assistant: Available to everyone */}
                  <li>
                     <button onClick={() => onSelectSection('ai-predict')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
                       <BrainCircuit size={18} className="text-purple-400" /> AI Assistant
                     </button>
                  </li>
-                 {(role === 'student' || role === 'officer') && (
-                    <li>
-                        <button onClick={() => onSelectSection('image-gen')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
-                          <Sparkles size={18} className="text-pink-400" /> AI Image Lab
-                        </button>
-                    </li>
-                 )}
+
+                 {/* Learning Tools: Students Only */}
                  {(role === 'student') && (
                    <>
                     <li>

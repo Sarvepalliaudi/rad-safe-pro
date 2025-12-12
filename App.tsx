@@ -5,7 +5,6 @@ import Sidebar from './components/Sidebar';
 import LearningContent from './components/LearningContent';
 import DoseCalculator from './components/DoseCalculator';
 import AIDosePredictor from './components/AIDosePredictor';
-import AIImageGenerator from './components/AIImageGenerator';
 import Quiz from './components/Quiz';
 import Spotters from './components/Spotters';
 import StartScreen from './components/StartScreen';
@@ -14,12 +13,13 @@ import Downloads from './components/Downloads';
 import Guide from './components/Guide';
 import AboutProject from './components/AboutProject';
 import AuthScreen from './components/AuthScreen';
+import PatientPortal from './components/PatientPortal';
 import { CONTENT_SECTIONS, QUIZ_QUESTIONS } from './constants';
 import { ViewState } from './types';
 import { getCurrentSession } from './services/authService';
 
 const App: React.FC = () => {
-  const [viewState, setViewState] = useState<ViewState>('START');
+  const [viewState, setViewState] = useState<ViewState | 'PATIENT_PORTAL'>('START');
   const [activeSectionId, setActiveSectionId] = useState<string>('intro');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -47,8 +47,12 @@ const App: React.FC = () => {
   };
 
   const handleNavigate = (id: string) => {
-    setActiveSectionId(id);
-    setViewState('SECTION');
+    if (id === 'patient-portal') {
+      setViewState('PATIENT_PORTAL');
+    } else {
+      setActiveSectionId(id);
+      setViewState('SECTION');
+    }
   };
 
   const handleBackToDashboard = () => {
@@ -59,7 +63,6 @@ const App: React.FC = () => {
     switch (activeSectionId) {
       case 'calculator': return <DoseCalculator />;
       case 'ai-predict': return <AIDosePredictor />;
-      case 'image-gen': return <AIImageGenerator />; 
       case 'quiz': return <Quiz allQuestions={QUIZ_QUESTIONS} onExit={handleBackToDashboard} />;
       case 'spotters': return <Spotters />;
       case 'downloads': return <Downloads />;
@@ -106,7 +109,7 @@ const App: React.FC = () => {
       <div className="flex-1 md:ml-64 flex flex-col min-w-0 transition-all duration-300">
         <div className="bg-white p-4 flex items-center justify-between border-b border-gray-200 sticky top-0 z-20 shadow-sm">
            <div className="flex items-center gap-2">
-             {viewState === 'SECTION' && (
+             {(viewState === 'SECTION' || viewState === 'PATIENT_PORTAL') && (
                <button onClick={handleBackToDashboard} className="md:hidden p-2 text-slate-600 hover:bg-gray-100 rounded-lg">
                  <ChevronLeft size={24} />
                </button>
@@ -122,6 +125,8 @@ const App: React.FC = () => {
         <main className="p-4 md:p-8 max-w-6xl mx-auto w-full animate-fade-in flex-1">
           {viewState === 'DASHBOARD' ? (
             <Dashboard onNavigate={handleNavigate} sections={CONTENT_SECTIONS} onLogout={handleLogout} />
+          ) : viewState === 'PATIENT_PORTAL' ? (
+            <PatientPortal />
           ) : (
             renderContent()
           )}
@@ -129,7 +134,7 @@ const App: React.FC = () => {
 
         {viewState === 'DASHBOARD' && (
            <footer className="py-6 text-center text-xs text-slate-400 border-t border-gray-200 bg-white">
-            <p>© {new Date().getFullYear()} RAD SAFE PRO. Version 3.0.0 (Pro)</p>
+            <p>© {new Date().getFullYear()} RAD SAFE PRO. Version 3.1.0 (Patient Edition)</p>
           </footer>
         )}
       </div>

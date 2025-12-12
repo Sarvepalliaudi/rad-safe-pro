@@ -121,49 +121,36 @@ export const askTutor = async (currentMessage: string, context: string, history:
   }
 };
 
-// --- IMAGE GENERATION (Nano Banana) ---
-
 export const generateRadiologyImage = async (prompt: string, size: '1K' | '2K'): Promise<string> => {
-  const fullPrompt = `A highly detailed, professional medical illustration or radiological image of: ${prompt}. Educational, clear, anatomical.`;
-  
   if (!ai) {
-    // Offline Simulation: Return a placeholder that looks like an image
-    return new Promise(resolve => {
-      setTimeout(() => {
-        // Use a dynamic placeholder service that generates images with text
-        const encodedText = encodeURIComponent(prompt.substring(0, 20));
-        resolve(`https://placehold.co/1024x1024/1e293b/ffffff/png?text=${encodedText}\n(Offline+Simulation)`);
-      }, 2000);
-    });
+    // Offline / Fallback
+    return new Promise(resolve => setTimeout(() => resolve("https://picsum.photos/seed/radiology/1024/1024"), 2000));
   }
-
   try {
-    // Use Gemini 3 Pro Image Preview (Nano Banana)
-    // Note: As per instructions, this returns base64 which we convert to a data URL
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-image-preview',
-      contents: { parts: [{ text: fullPrompt }] },
+      contents: {
+        parts: [{ text: `Radiology illustration: ${prompt}` }]
+      },
       config: {
-        imageConfig: { imageSize: size }
+        imageConfig: {
+          imageSize: size,
+          aspectRatio: '1:1'
+        }
       }
     });
 
-    // Extract image
-    // The instructions say output may contain image part.
-    for (const candidate of response.candidates || []) {
-      for (const part of candidate.content.parts || []) {
+    if (response.candidates && response.candidates[0].content && response.candidates[0].content.parts) {
+      for (const part of response.candidates[0].content.parts) {
         if (part.inlineData && part.inlineData.data) {
-           return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+          const base64EncodeString = part.inlineData.data;
+          return `data:image/png;base64,${base64EncodeString}`;
         }
       }
     }
-    
-    throw new Error("No image data found in response");
-
+    throw new Error("No image generated");
   } catch (error) {
-    console.warn("Image Gen Error:", error);
-    // Fallback to placeholder if API fails
-    const encodedText = encodeURIComponent(prompt);
-    return `https://placehold.co/1024x1024/e2e8f0/1e293b/png?text=Error+Generating+Image`;
+    console.error("Image generation failed", error);
+    return "https://picsum.photos/seed/error/1024/1024";
   }
 };
