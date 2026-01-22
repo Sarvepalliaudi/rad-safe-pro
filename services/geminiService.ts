@@ -127,26 +127,27 @@ export const generateRadiologyImage = async (prompt: string, size: '1K' | '2K'):
 
 /**
  * Geographic Radiation & Place Profile (Maps Grounding)
- * Model: gemini-2.5-flash (Maps grounding requires 2.5 series)
+ * Model: gemini-2.5-flash
  */
 export const getGeographicRadiationProfile = async (lat: number, lng: number) => {
   try {
     const ai = getAIClient();
-    // Re-engineered prompt to force tool usage for local facilities
-    const prompt = `CRITICAL TASK: Use Google Maps grounding to analyze the location Lat: ${lat}, Lng: ${lng}.
-    1. Identify the nearest Hospitals, Radiology Centers, and Oncology clinics.
-    2. Provide the names and addresses of at least 3 nearby medical facilities.
-    3. Determine the regional natural background radiation level (average mSv/year).
+    // Re-engineered prompt to prioritize finding "Radiation Places" (Radiology/Oncology)
+    const prompt = `SEARCH COMMAND: Analyze the location Lat: ${lat}, Lng: ${lng} using Google Maps.
+    1. Search for and identify all "Nearby Radiation Places" including Hospitals, Radiology Departments, X-ray Clinics, and Oncology Centers.
+    2. Explicitly list the names of at least 3 clinical facilities found in this area.
+    3. Analyze the natural environmental radiation background for these coordinates.
     
-    Structure your response like this:
-    ### LOCALITY IDENTIFIED: [Place Name]
+    Structure your answer exactly like this:
+    ### LOCALITY IDENTIFIED: [Exact Place Name]
     
-    ### NEARBY CLINICAL FACILITIES:
-    - [Name of Hospital/Clinic] ([Distance/Address])
-    - [Name of Hospital/Clinic] ([Distance/Address])
+    ### DETECTED RADIATION FACILITIES:
+    - [Hospital/Clinic Name 1]
+    - [Hospital/Clinic Name 2]
+    - [Hospital/Clinic Name 3]
     
-    ### REGIONAL RADIATION PROFILE:
-    [Analysis of environmental background radiation for this specific latitude/longitude]`;
+    ### REGIONAL DOSIMETRY PROFILE:
+    [Analysis of environmental background radiation]`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -162,7 +163,7 @@ export const getGeographicRadiationProfile = async (lat: number, lng: number) =>
     });
 
     return {
-      text: response.text || "Spatial scan complete. Details summarized in metadata.",
+      text: response.text || "Scan complete. Nearby clinical details available in metadata.",
       grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || []
     };
   } catch (error) {

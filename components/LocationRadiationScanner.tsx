@@ -38,7 +38,7 @@ const LocationRadiationScanner: React.FC = () => {
         processMapping(coords.lat, coords.lng);
       },
       (err) => {
-        console.warn("GPS Access Denied. Using regional baseline (DSU Trichy).", err);
+        console.warn("GPS Access Denied. Using regional baseline.", err);
         const defaultCoords = { lat: 10.8505, lng: 78.7047 };
         setLocation(defaultCoords);
         processMapping(defaultCoords.lat, defaultCoords.lng);
@@ -48,14 +48,14 @@ const LocationRadiationScanner: React.FC = () => {
   };
 
   const processMapping = async (lat: number, lng: number) => {
-    setLoadingStep('Grounding Local Facilities...');
+    setLoadingStep('Mapping Nearby Radiation Places...');
     try {
       const result = await getGeographicRadiationProfile(lat, lng);
       if (abortRef.current) return;
 
       setReport(result.text);
 
-      // Robust extraction of details from Grounding Chunks
+      // Extract specific clinical sites from Grounding Metadata
       const extractedLinks: { uri: string; title: string }[] = [];
       let detectedPlace: string | null = null;
 
@@ -66,6 +66,7 @@ const LocationRadiationScanner: React.FC = () => {
               uri: chunk.maps.uri, 
               title: chunk.maps.title || "Nearby Clinical Site" 
             });
+            // First map title usually represents the locality or primary hospital found
             if (!detectedPlace && chunk.maps.title) detectedPlace = chunk.maps.title;
           } else if (chunk.web) {
             extractedLinks.push({ 
@@ -78,24 +79,24 @@ const LocationRadiationScanner: React.FC = () => {
       
       setLinks(extractedLinks);
 
-      // Parse place name from text using regex as a primary method
+      // Priority parsing for Locality Name
       const placeMatch = result.text.match(/LOCALITY IDENTIFIED:\s*(.*)/i);
       if (placeMatch && placeMatch[1]) {
         setPlaceName(placeMatch[1].split('\n')[0].trim());
       } else if (detectedPlace) {
         setPlaceName(detectedPlace);
       } else {
-        setPlaceName("Detected Regional Locality");
+        setPlaceName("Identified Regional Hub");
       }
 
-      // Determine Environmental Risk based on content
+      // Physics-based Risk Assessment
       const upper = result.text.toUpperCase();
       if (upper.includes('HIGH') || upper.includes('CONCENTRATED')) setRisk('HIGH');
       else if (upper.includes('MODERATE')) setRisk('MODERATE');
       else setRisk('LOW');
 
     } catch (error: any) {
-      setReport(`Spatial error: ${error.message || 'System handshake failed'}. Try moving to an area with better GPS or clear sky view.`);
+      setReport(`Spatial logic error: ${error.message || 'Secure handshake failed'}.`);
     } finally {
       setLoading(false);
       setLoadingStep('');
@@ -113,7 +114,7 @@ const LocationRadiationScanner: React.FC = () => {
           <div>
             <h2 className="text-4xl font-black text-slate-800 tracking-tighter uppercase leading-none">Spatial Grounding</h2>
             <p className="text-slate-500 font-bold text-sm mt-2 flex items-center gap-2">
-              <Signal size={16} className="text-rad-500" /> Mapping Nearby Clinical Radiation Sources
+              <Signal size={16} className="text-rad-500" /> Mapping Clinics, Hospitals & Background Data
             </p>
           </div>
         </div>
@@ -130,18 +131,18 @@ const LocationRadiationScanner: React.FC = () => {
             onClick={() => { abortRef.current = true; setLoading(false); }} 
             className="px-10 py-5 bg-red-600 text-white rounded-2xl font-black text-sm uppercase flex items-center gap-3 shadow-xl active:scale-95"
           >
-            <XCircle size={20} /> Cancel Scan
+            <XCircle size={20} /> Terminate
           </button>
         )}
       </div>
 
-      {/* LOCATION HUD (GPS DATA) */}
+      {/* LOCATION HUD (GPS READINGS) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
          <div className="bg-slate-900 p-8 rounded-[2rem] text-white shadow-2xl flex items-center gap-5 border border-slate-800 transition-all hover:border-rad-400 group overflow-hidden">
             <div className="p-4 bg-rad-500/20 text-rad-400 rounded-2xl group-hover:scale-110 transition-transform"><MapPinIcon size={24}/></div>
             <div className="flex-1 overflow-hidden">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Identified Place</p>
-              <p className="font-black text-lg truncate text-rad-100">{placeName || (loading ? 'Scanning Maps...' : 'Waiting for GPS')}</p>
+              <p className="font-black text-lg truncate text-rad-100">{placeName || (loading ? 'Scanning Maps...' : 'Standby')}</p>
             </div>
          </div>
          <div className="bg-slate-900 p-8 rounded-[2rem] text-white shadow-2xl flex items-center gap-5 border border-slate-800 transition-all hover:border-teal-400 group">
@@ -184,12 +185,12 @@ const LocationRadiationScanner: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-tight">Physics Profile</h3>
-                      <p className="text-[11px] text-slate-400 font-black uppercase tracking-widest mt-1">Directly Grounded Analysis</p>
+                      <p className="text-[11px] text-slate-400 font-black uppercase tracking-widest mt-1">Grounded Local Analysis</p>
                     </div>
                   </div>
                   <div className="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
                      <div className={`w-3 h-3 rounded-full ${risk === 'LOW' ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`}></div>
-                     <span className="text-[11px] font-black uppercase tracking-widest text-slate-700">Environmental Risk: {risk}</span>
+                     <span className="text-[11px] font-black uppercase tracking-widest text-slate-700">Env. Risk: {risk}</span>
                   </div>
                 </div>
                 
@@ -216,7 +217,7 @@ const LocationRadiationScanner: React.FC = () => {
                 <Satellite size={140} className="text-slate-300" />
                 <div className="mt-10">
                    <h3 className="text-3xl font-black uppercase tracking-tighter text-slate-400">Scanner Ready</h3>
-                   <p className="text-sm font-black text-slate-400 mt-3 uppercase tracking-widest">Link with Google Maps to find radiation places near you.</p>
+                   <p className="text-sm font-black text-slate-400 mt-3 uppercase tracking-widest">Connect to find Radiology clinics & hospitals near you.</p>
                 </div>
               </div>
             )}
@@ -227,7 +228,7 @@ const LocationRadiationScanner: React.FC = () => {
         <div className="lg:col-span-4 space-y-8">
           <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl border border-slate-800">
             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 mb-8 flex items-center gap-2">
-              <Hospital size={14} className="text-rad-400" /> Nearby Radiology Sites
+              <Hospital size={14} className="text-rad-400" /> Nearby Clinical Sites
             </h3>
             
             <div className="space-y-4">
@@ -244,7 +245,7 @@ const LocationRadiationScanner: React.FC = () => {
                 </a>
               )) : (
                 <div className="py-16 text-center border-4 border-dashed border-slate-800 rounded-[2.5rem] opacity-40">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Scan to map facilities</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">No Sites Mapped Yet</p>
                 </div>
               )}
             </div>
@@ -252,16 +253,16 @@ const LocationRadiationScanner: React.FC = () => {
 
           <div className="bg-red-50 p-10 rounded-[3rem] border-2 border-red-100 shadow-xl">
             <div className="flex items-center gap-3 text-red-600 font-black text-xs uppercase mb-8">
-               <AlertTriangle size={24} /> Grounding Engine
+               <AlertTriangle size={24} /> Education Hub
             </div>
             <div className="space-y-6 text-[11px] font-bold text-red-900 leading-relaxed uppercase">
               <div className="p-4 bg-white/60 rounded-2xl">
-                <p className="mb-1 text-red-700">1. Verified Mapping</p>
-                <p className="opacity-60">Uses Google Maps to cross-reference actual medical sites in your vicinity.</p>
+                <p className="mb-1 text-red-700">1. Facility Detection</p>
+                <p className="opacity-60">Locates Radiology/Oncology departments using Google Maps Grounding.</p>
               </div>
               <div className="p-4 bg-white/60 rounded-2xl">
-                <p className="mb-1 text-red-700">2. Physics Baseline</p>
-                <p className="opacity-60">Calculates background ionizing radiation (Cosmic/Terrestrial) for your coordinates.</p>
+                <p className="mb-1 text-red-700">2. Regional Baseline</p>
+                <p className="opacity-60">Estimates environmental ionizing radiation (Cosmic/Terrestrial) for your area.</p>
               </div>
             </div>
           </div>
@@ -271,7 +272,7 @@ const LocationRadiationScanner: React.FC = () => {
                <Bot size={32} />
              </div>
              <div className="text-center">
-                <span className="text-[10px] font-black uppercase tracking-widest text-rad-700 block">Query Dr. Rad</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-rad-700 block">Query Dr. Rad AI</span>
                 <span className="text-[8px] font-black uppercase tracking-[0.2em] text-rad-400 mt-1">Deep Locality Context</span>
              </div>
           </button>
