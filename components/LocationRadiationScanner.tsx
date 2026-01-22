@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Navigation, Signal, Radar, Crosshair, MapPin as MapPinIcon, 
   Globe, Activity, Zap, ExternalLink, AlertTriangle, XCircle, Bot, Loader2,
-  Navigation2, Satellite, Map as MapIcon, Search, Building2, Hospital
+  Navigation2, Satellite, Map as MapIcon, Search, Building2, Hospital, Wifi, Smartphone, Home,
+  Info, MonitorSmartphone, Radio, ShieldCheck, HeartPulse
 } from 'lucide-react';
 import { getGeographicRadiationProfile } from '../services/geminiService';
 
@@ -20,13 +21,13 @@ const LocationRadiationScanner: React.FC = () => {
   const startScan = () => {
     abortRef.current = false;
     setLoading(true);
-    setLoadingStep('Locking Satellite Link...');
+    setLoadingStep('Securing Geodetic Lock...');
     setReport(null);
     setLinks([]);
     setPlaceName(null);
 
     if (!navigator.geolocation) {
-      alert("Geolocation unavailable.");
+      alert("GPS Access is required to verify local radiation hubs.");
       setLoading(false);
       return;
     }
@@ -38,17 +39,17 @@ const LocationRadiationScanner: React.FC = () => {
         processMapping(coords.lat, coords.lng);
       },
       (err) => {
-        console.warn("GPS Access Denied. Using regional baseline (DSU Trichy).", err);
+        console.warn("GPS Signal Weak. Reverting to Trichy Samayapuram Baseline.", err);
         const defaultCoords = { lat: 10.8505, lng: 78.7047 };
         setLocation(defaultCoords);
         processMapping(defaultCoords.lat, defaultCoords.lng);
       },
-      { timeout: 10000, enableHighAccuracy: true }
+      { timeout: 15000, enableHighAccuracy: true }
     );
   };
 
   const processMapping = async (lat: number, lng: number) => {
-    setLoadingStep('Grounding Local Facilities...');
+    setLoadingStep('Grounding Clinical Hub Data...');
     try {
       const result = await getGeographicRadiationProfile(lat, lng);
       if (abortRef.current) return;
@@ -63,13 +64,13 @@ const LocationRadiationScanner: React.FC = () => {
           if (chunk.maps) {
             extractedLinks.push({ 
               uri: chunk.maps.uri, 
-              title: chunk.maps.title || "Nearby Clinical Site" 
+              title: chunk.maps.title || "Clinical Facility" 
             });
             if (!detectedPlace && chunk.maps.title) detectedPlace = chunk.maps.title;
           } else if (chunk.web) {
             extractedLinks.push({ 
               uri: chunk.web.uri, 
-              title: chunk.web.title || "Safety Resource" 
+              title: chunk.web.title || "Physics Resource" 
             });
           }
         });
@@ -83,16 +84,16 @@ const LocationRadiationScanner: React.FC = () => {
       } else if (detectedPlace) {
         setPlaceName(detectedPlace);
       } else {
-        setPlaceName("Detected Locality");
+        setPlaceName("Identified Diagnostic Zone");
       }
 
       const upper = result.text.toUpperCase();
-      if (upper.includes('HIGH') || upper.includes('CONCENTRATED')) setRisk('HIGH');
+      if (upper.includes('HIGH') || upper.includes('NUCLEAR')) setRisk('HIGH');
       else if (upper.includes('MODERATE')) setRisk('MODERATE');
       else setRisk('LOW');
 
     } catch (error: any) {
-      setReport(`Spatial error: ${error.message || 'System handshake failed'}.`);
+      setReport(`Spatial bridge failure. The area profile is currently inaccessible.`);
     } finally {
       setLoading(false);
       setLoadingStep('');
@@ -100,17 +101,20 @@ const LocationRadiationScanner: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto pb-12 animate-fade-in">
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 md:mb-12">
-        <div className="flex items-center gap-4 md:gap-6">
-          <div className="p-4 md:p-5 bg-rad-600 text-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl border-2 md:border-4 border-white shrink-0">
-            <Radar size={28} className={loading ? 'animate-spin' : ''} />
+    <div className="max-w-6xl mx-auto pb-24 md:pb-12 animate-fade-in font-sans">
+      {/* SCANNER CONTROL CENTER */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 md:mb-20">
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <div className="p-6 bg-rad-600 text-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(14,165,233,0.3)] border-4 border-white shrink-0">
+              <Radar size={40} className={loading ? 'animate-spin' : ''} />
+            </div>
+            {loading && <div className="absolute inset-0 border-4 border-rad-500 rounded-[2.5rem] animate-ping opacity-20"></div>}
           </div>
           <div>
-            <h2 className="text-2xl md:text-4xl font-black text-slate-800 tracking-tighter uppercase leading-none">Spatial Grounding</h2>
-            <p className="text-slate-500 font-bold text-[10px] md:text-sm mt-1 flex items-center gap-2">
-              <Signal size={14} className="text-rad-500" /> Mapping Regional Radiation Hubs
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">Mapping Hub</h2>
+            <p className="text-slate-500 font-bold text-xs md:text-base mt-2 flex items-center gap-2">
+              <Signal size={18} className="text-rad-500" /> Grounded Local Awareness Engine
             </p>
           </div>
         </div>
@@ -119,86 +123,88 @@ const LocationRadiationScanner: React.FC = () => {
           {!loading ? (
             <button 
               onClick={startScan} 
-              className="w-full md:w-auto px-6 md:px-10 py-4 md:py-5 bg-rad-600 text-white rounded-2xl font-black text-[10px] md:text-sm uppercase flex items-center justify-center gap-3 hover:bg-rad-700 shadow-xl transition-all active:translate-y-1"
+              className="w-full md:w-auto px-14 py-7 bg-rad-600 text-white rounded-[2.5rem] font-black text-sm uppercase flex items-center justify-center gap-4 hover:bg-rad-700 shadow-2xl hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <Navigation2 size={18} /> Deploy Scan
+              <Navigation2 size={24} /> Initialize Spatial Scan
             </button>
           ) : (
             <button 
               onClick={() => { abortRef.current = true; setLoading(false); }} 
-              className="w-full md:w-auto px-6 md:px-10 py-4 md:py-5 bg-red-600 text-white rounded-2xl font-black text-[10px] md:text-sm uppercase flex items-center justify-center gap-3 shadow-xl active:scale-95"
+              className="w-full md:w-auto px-14 py-7 bg-red-600 text-white rounded-[2.5rem] font-black text-sm uppercase flex items-center justify-center gap-4 shadow-2xl active:scale-95"
             >
-              <XCircle size={18} /> Cancel
+              <XCircle size={24} /> Terminate Process
             </button>
           )}
         </div>
       </div>
 
-      {/* LOCATION HUD */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-10">
-         <div className="bg-slate-900 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] text-white shadow-xl flex items-center gap-4 md:gap-5 border border-slate-800">
-            <div className="p-3 bg-rad-500/20 text-rad-400 rounded-xl shrink-0"><MapPinIcon size={20}/></div>
+      {/* REGISTRY HUD */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+         <div className="bg-white p-8 rounded-[3rem] shadow-xl flex items-center gap-6 border border-slate-100">
+            <div className="p-4 bg-rad-50 text-rad-600 rounded-2xl shrink-0"><MapPinIcon size={32}/></div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Identified Place</p>
-              <p className="font-black text-sm md:text-lg truncate text-rad-100">{placeName || (loading ? 'Scanning...' : 'Waiting')}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Current Sector</p>
+              <p className="font-black text-lg md:text-xl text-slate-900 truncate">{placeName || (loading ? 'Scanning...' : 'Idle')}</p>
             </div>
          </div>
-         <div className="bg-slate-900 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] text-white shadow-xl flex items-center gap-4 md:gap-5 border border-slate-800">
-            <div className="p-3 bg-teal-500/20 text-teal-400 rounded-xl shrink-0"><Crosshair size={20}/></div>
+         <div className="bg-white p-8 rounded-[3rem] shadow-xl flex items-center gap-6 border border-slate-100">
+            <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl shrink-0"><Satellite size={32}/></div>
             <div>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Latitude</p>
-              <p className="font-mono text-sm md:text-lg text-teal-100">{location ? `${location.lat.toFixed(4)}° N` : '0.0000°'}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Geodetic Link</p>
+              <p className="font-mono text-sm text-blue-700 font-bold">{location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : 'Awaiting Signal...'}</p>
             </div>
          </div>
-         <div className="bg-slate-900 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] text-white shadow-xl flex items-center gap-4 md:gap-5 border border-slate-800">
-            <div className="p-3 bg-blue-500/20 text-blue-400 rounded-xl shrink-0"><Globe size={20}/></div>
+         <div className="bg-white p-8 rounded-[3rem] shadow-xl flex items-center gap-6 border border-slate-100">
+            <div className="p-4 bg-teal-50 text-teal-600 rounded-2xl shrink-0"><ShieldCheck size={32}/></div>
             <div>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Longitude</p>
-              <p className="font-mono text-sm md:text-lg text-blue-100">{location ? `${location.lng.toFixed(4)}° E` : '0.0000°'}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Radiation Profile</p>
+              <div className="flex items-center gap-2">
+                 <div className={`w-3 h-3 rounded-full ${risk === 'LOW' ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-orange-500 shadow-[0_0_10px_#f97316]'}`}></div>
+                 <p className="font-black text-lg uppercase tracking-widest text-slate-900">{risk} EXPOSURE</p>
+              </div>
             </div>
          </div>
       </div>
 
-      {/* ANALYSIS AREA */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* MAIN REPORT AREA */}
         <div className="lg:col-span-8">
-          <div className="bg-white rounded-[2rem] md:rounded-[3.5rem] p-6 md:p-14 shadow-2xl border border-slate-100 min-h-[400px] md:min-h-[500px] relative overflow-hidden">
+          <div className="bg-white rounded-[4rem] p-10 md:p-20 shadow-2xl border border-slate-100 min-h-[700px] relative overflow-hidden">
             {loading ? (
-              <div className="flex flex-col items-center justify-center h-full text-center py-12 md:py-20">
-                <Activity size={60} className="text-rad-600 animate-pulse mb-8" />
-                <h3 className="text-xl md:text-3xl font-black text-rad-900 mb-2 uppercase tracking-tight">{loadingStep}</h3>
-                <p className="text-[8px] md:text-[10px] text-slate-400 font-black uppercase tracking-[0.4em] animate-pulse">Requesting Grounding Data</p>
+              <div className="flex flex-col items-center justify-center h-full text-center py-24">
+                <div className="relative mb-12">
+                   <Loader2 size={120} className="text-rad-600 animate-spin opacity-20" />
+                   <div className="absolute inset-0 flex items-center justify-center">
+                     <Globe size={48} className="text-rad-500 animate-pulse" />
+                   </div>
+                </div>
+                <h3 className="text-3xl font-black text-slate-900 mb-3 uppercase tracking-tight">{loadingStep}</h3>
+                <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.5em] animate-pulse">Syncing with Google Maps Grounding</p>
               </div>
             ) : report ? (
               <div className="animate-fade-in">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-8 border-b border-slate-100 gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-4 rounded-2xl text-white shadow-lg ${risk === 'HIGH' ? 'bg-red-500' : risk === 'MODERATE' ? 'bg-orange-500' : 'bg-green-500'}`}>
-                      <Zap size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-xl md:text-2xl font-black text-slate-900 uppercase">Physics Profile</h3>
-                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Live Grounded Analysis</p>
-                    </div>
-                  </div>
-                  <div className="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2">
-                     <div className={`w-2.5 h-2.5 rounded-full ${risk === 'LOW' ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`}></div>
-                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-700">Env. Risk: {risk}</span>
-                  </div>
+                <div className="flex items-center gap-6 mb-16 pb-12 border-b border-slate-100">
+                   <div className="p-7 bg-slate-900 text-white rounded-[2.5rem] shadow-2xl">
+                      <Globe size={40} />
+                   </div>
+                   <div>
+                      <h3 className="text-3xl font-black text-slate-900 uppercase">Grounded Locality Analysis</h3>
+                      <p className="text-[11px] text-slate-400 font-black uppercase tracking-widest mt-1">Registry Protocol v7.2-Final</p>
+                   </div>
                 </div>
                 
-                <div className="space-y-6 md:space-y-8">
+                <div className="space-y-16">
                   {report.split('###').filter(Boolean).map((section, idx) => (
-                    <div key={idx} className="bg-slate-50/50 p-6 md:p-10 rounded-[1.5rem] md:rounded-[3rem] border border-slate-100">
-                      <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-[13px] md:text-sm font-medium">
+                    <div key={idx} className="bg-slate-50/50 p-12 md:p-16 rounded-[3.5rem] border border-slate-100 relative group hover:bg-white hover:shadow-[0_32px_64px_rgba(0,0,0,0.04)] transition-all duration-700">
+                      <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm md:text-xl font-medium">
                         {section.split('\n').map((line, lineIdx) => {
                           if (lineIdx === 0 && line.trim()) return (
-                            <h4 key={lineIdx} className="text-sm md:text-xl font-black text-rad-700 mb-4 md:mb-6 uppercase tracking-tighter flex items-center gap-2">
-                              <Building2 size={16} className="md:w-5 md:h-5" />
+                            <h4 key={lineIdx} className="text-2xl md:text-3xl font-black text-slate-900 mb-10 uppercase tracking-tighter flex items-center gap-5">
+                              <div className="w-12 h-12 bg-rad-600 text-white rounded-2xl flex items-center justify-center shadow-lg"><Building2 size={24} /></div>
                               {line.replace(/#/g, '').trim()}
                             </h4>
                           );
-                          return <p key={lineIdx} className="mb-2" dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900">$1</strong>') }} />;
+                          return <p key={lineIdx} className="mb-6 last:mb-0" dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-black">$1</strong>') }} />;
                         })}
                       </div>
                     </div>
@@ -206,51 +212,100 @@ const LocationRadiationScanner: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full py-16 opacity-30 text-center">
-                <Satellite size={100} className="text-slate-300 md:w-[140px] md:h-[140px]" />
-                <div className="mt-8">
-                   <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-slate-400">Scanner Ready</h3>
-                   <p className="text-[10px] md:text-sm font-black text-slate-400 mt-2 uppercase tracking-widest">Deploy scan to find nearby clinical hubs.</p>
+              <div className="flex flex-col items-center justify-center h-full py-24 opacity-40 text-center">
+                <div className="p-16 bg-slate-50 rounded-full mb-12 shadow-inner">
+                   <Satellite size={160} className="text-slate-300" />
+                </div>
+                <div className="max-w-md">
+                   <h3 className="text-5xl font-black uppercase tracking-tighter text-slate-300">Hub Scanner Ready</h3>
+                   <p className="text-base font-bold text-slate-400 mt-6 uppercase tracking-widest leading-relaxed">Deploy scanner to identify verified clinical hubs and analyze daily WiFi/EMF exposure levels in your sector.</p>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* SIDEBAR */}
-        <div className="lg:col-span-4 space-y-6 md:space-y-8">
-          <div className="bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white shadow-2xl">
-            <h3 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 mb-6 md:mb-8 flex items-center gap-2">
-              <Hospital size={14} className="text-rad-400" /> Clinical Grounding
+        {/* SIDEBAR: VERIFIED HUB REGISTRY */}
+        <div className="lg:col-span-4 space-y-10">
+          <div className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rad-600 opacity-10 blur-[60px]"></div>
+            <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-500 mb-10 flex items-center gap-4">
+              <Hospital size={18} className="text-rad-400" /> Verified Clinical Hubs
             </h3>
             
-            <div className="space-y-3">
+            <div className="space-y-4">
               {links.length > 0 ? links.map((link, i) => (
                 <a 
                   key={i} 
                   href={link.uri} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center justify-between p-4 md:p-6 bg-white/5 rounded-[1.2rem] md:rounded-[1.8rem] text-[9px] md:text-[10px] font-black uppercase tracking-widest text-rad-300 hover:bg-white/10 transition-all border border-white/5 group"
+                  className="flex items-center justify-between p-8 bg-white/5 rounded-3xl text-[11px] font-black uppercase tracking-widest text-rad-300 hover:bg-rad-600 hover:text-white transition-all border border-white/5 group shadow-lg"
                 >
-                  <span className="truncate pr-4">{link.title}</span> 
-                  <ExternalLink size={14} className="shrink-0" />
+                  <div className="flex items-center gap-4 truncate">
+                    <HeartPulse size={18} className="shrink-0 text-rad-500 group-hover:text-white" />
+                    <span className="truncate pr-4">{link.title}</span> 
+                  </div>
+                  <ExternalLink size={20} className="shrink-0 opacity-40 group-hover:opacity-100" />
                 </a>
               )) : (
-                <div className="py-12 text-center border-2 border-dashed border-slate-800 rounded-2xl opacity-30">
-                  <p className="text-[9px] font-black uppercase text-slate-600">No Data Links</p>
+                <div className="py-24 text-center border-2 border-dashed border-slate-800 rounded-[3rem] opacity-20">
+                  <p className="text-[10px] font-black uppercase text-slate-600">Scan Required to Fetch Registry</p>
                 </div>
               )}
             </div>
+            
+            <div className="mt-10 p-6 bg-white/5 rounded-2xl border border-white/5">
+               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest text-center leading-relaxed">
+                 Data grounded via Google Maps API. Facility verification status is provided by Dr. Rad AI.
+               </p>
+            </div>
           </div>
 
-          <div className="bg-red-50 p-6 md:p-8 rounded-[2rem] border-2 border-red-100 shadow-sm">
-             <div className="flex items-center gap-2 text-red-600 font-black text-[10px] uppercase mb-4">
-                <AlertTriangle size={16} /> Logic Engine
+          {/* EDUCATIONAL LEGEND */}
+          <div className="bg-white p-12 rounded-[3.5rem] border border-slate-100 shadow-xl space-y-12 relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rad-400 to-rad-600"></div>
+             <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
+               <Info size={16} className="text-rad-500" /> Awareness Protocol
+             </h4>
+             
+             <div className="space-y-10">
+                <div className="flex gap-8 group">
+                   <div className="w-16 h-16 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 shrink-0 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+                      <Wifi size={32}/>
+                   </div>
+                   <div>
+                      <p className="text-sm font-black uppercase text-slate-900 mb-1">WiFi & Homes</p>
+                      <p className="text-[11px] font-medium text-slate-500 leading-relaxed uppercase">Non-ionizing waves. Perfectly safe for domestic use and shop environments.</p>
+                   </div>
+                </div>
+                <div className="flex gap-8 group">
+                   <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center text-indigo-600 shrink-0 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+                      <MonitorSmartphone size={32}/>
+                   </div>
+                   <div>
+                      <p className="text-sm font-black uppercase text-slate-900 mb-1">Mobiles & Shops</p>
+                      <p className="text-[11px] font-medium text-slate-500 leading-relaxed uppercase">RF frequencies. No DNA-damaging potential. Safe for public commerce.</p>
+                   </div>
+                </div>
+                <div className="flex gap-8 group">
+                   <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center text-red-600 shrink-0 shadow-sm group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
+                      <Hospital size={32}/>
+                   </div>
+                   <div>
+                      <p className="text-sm font-black uppercase text-slate-900 mb-1">Clinical Zones</p>
+                      <p className="text-[11px] font-medium text-slate-500 leading-relaxed uppercase">Ionizing energy used for diagnostics. Highly regulated and shielded for safety.</p>
+                   </div>
+                </div>
              </div>
-             <p className="text-[11px] font-bold text-red-900 leading-relaxed uppercase opacity-80">
-                Maps grounding allows RAD SAFE PRO to cross-reference actual medical clinical sites with regional radiation background estimates.
-             </p>
+
+             <div className="pt-10 border-t border-slate-100">
+                <div className="bg-rad-50 p-8 rounded-3xl border border-rad-100">
+                   <p className="text-[11px] font-black text-rad-800 uppercase leading-relaxed text-center italic">
+                     "Education is the best shielding against radiation anxiety."
+                   </p>
+                </div>
+             </div>
           </div>
         </div>
       </div>

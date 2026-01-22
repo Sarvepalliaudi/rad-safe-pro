@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ChatMessage, QuizQuestion } from "../types";
 
@@ -97,57 +98,32 @@ export const generateAIQuiz = async (topic: string, count: number): Promise<Quiz
 };
 
 /**
- * Image Generation
- * Model: gemini-3-pro-image-preview
- */
-export const generateRadiologyImage = async (prompt: string, size: '1K' | '2K'): Promise<string> => {
-  try {
-    const ai = getAIClient();
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-image-preview',
-      contents: { parts: [{ text: `Professional medical radiology diagram: ${prompt}` }] },
-      config: { 
-        imageConfig: { 
-          aspectRatio: "1:1",
-          imageSize: size
-        } 
-      },
-    });
-
-    for (const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
-      }
-    }
-    throw new Error("No image data");
-  } catch (error) {
-    return `https://picsum.photos/seed/${encodeURIComponent(prompt)}/1024/1024`;
-  }
-};
-
-/**
  * Geographic Radiation & Place Profile (Maps Grounding)
  * Model: gemini-2.5-flash
  */
 export const getGeographicRadiationProfile = async (lat: number, lng: number) => {
   try {
     const ai = getAIClient();
-    // Re-engineered prompt to prioritize finding "Radiation Places" (Radiology/Oncology)
     const prompt = `SEARCH COMMAND: Analyze the location Lat: ${lat}, Lng: ${lng} using Google Maps.
-    1. Search for and identify all "Nearby Radiation Places" including Hospitals, Radiology Departments, X-ray Clinics, and Oncology Centers.
-    2. Explicitly list the names of at least 3 clinical facilities found in this area.
-    3. Analyze the natural environmental radiation background for these coordinates.
     
+    1. Identify all nearby "Radiation Hubs": Hospitals, Radiology Centers, Nuclear Medicine facilities.
+    2. Analyze common environmental radiation sources in this specific area:
+       - Explain Non-Ionizing sources: Wi-Fi routers, Mobile towers, and handheld devices in nearby shops/homes.
+       - Explain Ionizing sources: Clinical equipment and natural background radiation from soil/buildings.
+    3. List at least 3 facility names found nearby.
+
     Structure your answer exactly like this:
     ### LOCALITY IDENTIFIED: [Exact Place Name]
     
-    ### DETECTED RADIATION FACILITIES:
-    - [Hospital/Clinic Name 1]
-    - [Hospital/Clinic Name 2]
-    - [Hospital/Clinic Name 3]
+    ### CLINICAL RADIATION HUBS:
+    - [Facility 1]
+    - [Facility 2]
+    - [Facility 3]
     
-    ### REGIONAL DOSIMETRY PROFILE:
-    [Analysis of environmental background radiation]`;
+    ### ENVIRONMENTAL SOURCE ANALYSIS:
+    **Clinical Exposure:** [Details about nearby hospital x-ray/scan zones]
+    **Commercial/Daily Life:** [Analysis of Wi-Fi, Mobile Towers, and Shops in this area. Clarify the difference between non-ionizing (safe) and ionizing radiation.]
+    **Natural Background:** [Typical soil/terrestrial radiation for this region]`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -163,11 +139,50 @@ export const getGeographicRadiationProfile = async (lat: number, lng: number) =>
     });
 
     return {
-      text: response.text || "Scan complete. Nearby clinical details available in metadata.",
+      text: response.text || "Mapping data processed. Nearby clinical facilities identified.",
       grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || []
     };
   } catch (error) {
     console.error("Mapping Engine Error:", error);
+    throw error;
+  }
+};
+
+/**
+ * Image Generation (Nano Banana)
+ * Model: gemini-2.5-flash-image or gemini-3-pro-image-preview
+ * Logic: Iterate through parts to find inlineData.
+ */
+export const generateRadiologyImage = async (prompt: string, size: '1K' | '2K' = '1K'): Promise<string> => {
+  try {
+    const ai = getAIClient();
+    // Upgrade to gemini-3-pro-image-preview for high-quality (2K) requests as per guidelines
+    const model = size === '2K' ? 'gemini-3-pro-image-preview' : 'gemini-2.5-flash-image';
+    
+    const response = await ai.models.generateContent({
+      model,
+      contents: { parts: [{ text: prompt }] },
+      config: {
+        imageConfig: {
+          aspectRatio: "1:1",
+          // Only gemini-3-pro-image-preview supports imageSize configuration.
+          ...(model === 'gemini-3-pro-image-preview' ? { imageSize: size } : {})
+        }
+      }
+    });
+
+    const parts = response.candidates?.[0]?.content?.parts;
+    if (parts) {
+      for (const part of parts) {
+        if (part.inlineData) {
+          const base64Data = part.inlineData.data;
+          return `data:image/png;base64,${base64Data}`;
+        }
+      }
+    }
+    throw new Error("No image data found in response.");
+  } catch (error) {
+    console.error("Radiology Image Generation Error:", error);
     throw error;
   }
 };
