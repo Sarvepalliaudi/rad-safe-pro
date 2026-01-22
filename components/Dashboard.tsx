@@ -1,9 +1,12 @@
-
 import React, { useEffect, useState } from 'react';
-import { Section, UserProfile, ActivityLog } from '../types';
-import { BookOpen, Calculator, ShieldAlert, BrainCircuit, HelpCircle, Download, Info, Move, Scan, Trophy, HeartHandshake, LogOut, Users, Activity, Smartphone, Monitor, Building2, IdCard } from 'lucide-react';
-import { getUserProfile, getActivityLogs } from '../services/userService';
-import { logoutUser } from '../services/authService';
+import { Section, UserProfile } from '../types';
+import { 
+  BookOpen, Calculator, ShieldAlert, BrainCircuit, HelpCircle, 
+  Move, Scan, Trophy, HeartHandshake, LogOut, Users, 
+  Activity, Smartphone, Eye, Sparkles, ChevronRight, 
+  Languages, Heart, Music, Video, ClipboardCheck, Radar, Map as MapIcon
+} from 'lucide-react';
+import { getUserProfile } from '../services/userService';
 
 interface DashboardProps {
   onNavigate: (view: string) => void;
@@ -13,227 +16,154 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate, sections, onLogout }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [logs, setLogs] = useState<ActivityLog[]>([]);
 
   useEffect(() => {
     const p = getUserProfile();
-    
     if (!p.id) {
       onLogout();
       return;
     }
-
     setProfile(p);
-    
-    // Load sensitive logs only if role is ADMIN
-    if (p.role === 'admin') {
-      setLogs(getActivityLogs());
-    }
   }, []);
-
-  const handleLogout = () => {
-    logoutUser();
-    onLogout();
-  };
 
   if (!profile) return null;
 
   const role = profile.role;
+  const isPublic = role === 'public' || role === 'patient';
   const isPro = profile.isPro || role === 'radiology_officer' || role === 'admin'; 
-  const showPublicContent = role !== 'admin'; // Everyone but Admin usually navigates content, though Admin can too
 
-  // Define which roles can access which quick-link cards
-  // Note: 'radiology_officer' acts like a Pro Student/Teacher
-  const studentItems = [
-    { id: 'intro', label: 'Physics Hub', icon: <BookOpen size={24} />, color: 'bg-blue-100 text-blue-600', roles: ['student', 'radiology_officer', 'admin'] },
+  const navItems = [
+    // Student & Pro Tools
+    { id: 'intro', label: 'X-Ray Physics', icon: <BookOpen size={24} />, color: 'bg-blue-100 text-blue-600', roles: ['student', 'radiology_officer', 'admin'] },
+    { id: 'safety', label: 'Radiation Safety', icon: <ShieldAlert size={24} />, color: 'bg-red-100 text-red-600', roles: ['student', 'radiology_officer', 'admin'] },
+    { id: 'modalities', label: 'Modalities Hub', icon: <Scan size={24} />, color: 'bg-indigo-100 text-indigo-600', roles: ['student', 'radiology_officer', 'admin'] },
     { id: 'calculator', label: 'Calculators', icon: <Calculator size={24} />, color: 'bg-emerald-100 text-emerald-600', roles: ['student', 'radiology_officer', 'admin'] },
-    { id: 'safety', label: 'Safety Protocols', icon: <ShieldAlert size={24} />, color: 'bg-red-100 text-red-600', roles: ['student', 'radiology_officer', 'admin'] },
-    { id: 'positioning', label: 'Positioning', icon: <Move size={24} />, color: 'bg-orange-100 text-orange-600', roles: ['student'] },
-    { id: 'modalities', label: 'CT / MRI / USG', icon: <Scan size={24} />, color: 'bg-indigo-100 text-indigo-600', roles: ['student', 'radiology_officer', 'admin'] },
-    { id: 'quiz', label: 'Quiz Zone', icon: <HelpCircle size={24} />, color: 'bg-yellow-100 text-yellow-600', roles: ['student'] },
-    { id: 'ai-predict', label: 'AI Assistant', icon: <BrainCircuit size={24} />, color: 'bg-purple-100 text-purple-600', roles: ['student', 'patient', 'public', 'radiology_officer', 'admin'] },
+    
+    // Shared Tools
+    { id: 'geo-map', label: 'Mapping Assistant', icon: <Radar size={24} />, color: 'bg-indigo-600 text-white shadow-xl shadow-indigo-100', roles: ['student', 'radiology_officer', 'admin', 'patient', 'public'] },
+    { id: 'sensor-lab', label: 'Sensor Lab', icon: <Smartphone size={24} />, color: 'bg-pink-100 text-pink-600', roles: ['student', 'radiology_officer', 'admin', 'patient', 'public'] },
+    
+    // Patient Specific Tools
+    { id: 'patient-portal', label: 'Companion Portal', icon: <Heart size={24} />, color: 'bg-rose-100 text-rose-600', roles: ['patient', 'public'] },
   ];
 
-  const filteredItems = studentItems.filter(item => item.roles.includes(role));
+  const filteredItems = navItems.filter(item => item.roles.includes(role));
 
   return (
-    <div className="max-w-4xl mx-auto pb-20">
-      <header className="mb-6 flex justify-between items-end">
+    <div className="max-w-6xl mx-auto pb-20 animate-fade-in font-sans">
+      <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">
-             {role === 'patient' ? 'Welcome, Patient' : 
-              role === 'radiology_officer' ? 'Officer Dashboard' : 
-              role === 'admin' ? 'Admin Control Panel' : 
-              role === 'public' ? 'Public Portal' : 'Student Hub'}
+          <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase">
+             {isPublic ? 'Public Hub' : 
+              role === 'radiology_officer' ? 'Command Center' : 
+              role === 'admin' ? 'Master Systems' : 'Student Dashboard'}
           </h2>
-          <div className="flex flex-col gap-1 mt-1">
-            <div className="flex items-center gap-2">
-              <p className="text-slate-500 font-medium capitalize">{profile.name}</p>
-              {isPro && <span className="px-1.5 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold rounded uppercase">PRO</span>}
-            </div>
-            
-            {/* Student Details Display */}
-            {role === 'student' && profile.collegeName && (
-              <div className="text-[10px] text-slate-400 flex flex-col">
-                <span className="flex items-center gap-1"><Building2 size={10}/> {profile.collegeName}</span>
-                <span className="flex items-center gap-1"><IdCard size={10}/> Roll: {profile.studentId}</span>
-              </div>
-            )}
-            
-            {/* Officer Details Display */}
-            {role === 'radiology_officer' && profile.licenseId && (
-               <span className="text-[10px] text-blue-500 flex items-center gap-1 font-mono">
-                 <IdCard size={10}/> LIC: {profile.licenseId}
-               </span>
+          <div className="flex items-center gap-3 mt-2">
+            <p className="text-slate-500 font-black text-[10px] uppercase tracking-widest">{profile.name}</p>
+            {isPro ? (
+              <span className="px-2 py-0.5 bg-rad-600 text-white text-[9px] font-black rounded-lg uppercase tracking-wider shadow-lg shadow-rad-100">PRO ACCESS</span>
+            ) : (
+              <span className="px-2 py-0.5 bg-teal-600 text-white text-[9px] font-black rounded-lg uppercase tracking-wider shadow-lg shadow-teal-100">AWARENESS MODE</span>
             )}
           </div>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-3">
            {role === 'student' && (
-             <div className="bg-white px-3 py-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
-               <Trophy size={16} className="text-yellow-500" />
-               <div className="text-right">
-                 <p className="text-xs font-bold text-slate-800">LVL {profile.level}</p>
-                 <p className="text-xs text-slate-400">{profile.totalXp} XP</p>
+             <div className="bg-white px-5 py-3 rounded-2xl shadow-xl border border-gray-50 flex items-center gap-3">
+               <Trophy size={20} className="text-yellow-500" />
+               <div className="text-left">
+                 <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Level {profile.level}</p>
+                 <p className="text-[9px] text-slate-400 font-bold">{profile.totalXp} XP</p>
                </div>
              </div>
            )}
-           <button onClick={handleLogout} className="bg-slate-100 p-2 rounded-xl text-slate-600 hover:bg-slate-200" title="Logout">
+           <button onClick={onLogout} className="bg-slate-900 text-white p-4 rounded-2xl hover:bg-black shadow-lg transition-transform active:scale-90">
              <LogOut size={20} />
            </button>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* LEFT COLUMN: Main Nav */}
-        <div className="md:col-span-2 space-y-8">
+      {/* PRIMARY ACTION CARD */}
+      <div className="mb-12">
+        <button
+          onClick={() => onNavigate(isPublic ? 'patient-portal' : 'intro')}
+          className={`w-full relative overflow-hidden p-10 rounded-[3rem] shadow-2xl transition-all hover:scale-[1.01] text-left group border-4 border-white ${isPublic ? 'bg-rose-600 shadow-rose-100' : 'bg-slate-900 shadow-slate-200'}`}
+        >
+          <div className="absolute top-0 right-0 w-64 h-full bg-white/5 skew-x-12 translate-x-32 group-hover:translate-x-16 transition-transform duration-700"></div>
           
-          {/* Primary Role Content */}
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
-              {role === 'patient' || role === 'public' ? 'Recommended for You' : 'Quick Access'}
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              {filteredItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => onNavigate(item.id)}
-                  className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all active:scale-95 text-center h-32 relative overflow-hidden group"
-                >
-                  <div className={`p-3 rounded-xl mb-3 ${item.color} z-10 relative`}>
-                    {item.icon}
-                  </div>
-                  <span className="font-semibold text-slate-700 text-sm z-10 relative">{item.label}</span>
-                </button>
-              ))}
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div className="flex-1">
+              <h3 className="text-4xl font-black text-white mb-3 tracking-tighter uppercase leading-none">
+                {isPublic ? 'Patient Companion Portal' : 'Academic Core Hub'}
+              </h3>
+              <p className="text-white/70 font-bold text-sm max-w-lg">
+                {isPublic 
+                  ? 'Access music, checklists, YouTube scan guides, and our AI Nurse assistant for a better imaging experience.' 
+                  : 'Master advanced X-Ray physics, safety protocols, and clinical positioning via our pro curriculum.'}
+              </p>
+            </div>
+            
+            <div className="bg-white text-slate-900 px-8 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest flex items-center gap-3 shadow-xl group-hover:bg-rad-100 transition-colors">
+              Launch {isPublic ? 'Portal' : 'Curriculum'} <ChevronRight size={20} />
             </div>
           </div>
+        </button>
+      </div>
 
-          {/* Public Division - ENHANCED FOR PATIENTS */}
-          {(showPublicContent) && (
-            <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
-                {role === 'patient' ? 'Your Visit' : 'Public Awareness'}
-              </h3>
-              
-              {role === 'patient' ? (
-                <button
-                  onClick={() => onNavigate('patient-portal')}
-                  className="w-full flex items-center gap-4 p-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl shadow-lg shadow-teal-200 text-white hover:scale-[1.02] transition-transform"
-                >
-                  <div className="p-4 bg-white/20 rounded-full animate-pulse">
-                    <HeartHandshake size={32} />
-                  </div>
-                  <div className="text-left flex-1">
-                    <h3 className="font-bold text-xl">Go to Patient Portal</h3>
-                    <p className="text-teal-100 text-sm mt-1">Prepare checklist, Wait times, Results & Relaxing sounds.</p>
-                  </div>
-                  <Move size={20} className="text-teal-200" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => onNavigate('awareness')}
-                  className="w-full flex items-center gap-4 p-5 bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl shadow-lg shadow-teal-200 text-white hover:opacity-95 transition-opacity"
-                >
-                  <div className="p-3 bg-white/20 rounded-full">
-                    <HeartHandshake size={28} />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="font-bold text-lg">Safety Guide</h3>
-                    <p className="text-teal-100 text-sm">Understand radiation risks & myths</p>
-                  </div>
-                </button>
-              )}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12">
+        {filteredItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => onNavigate(item.id)}
+            className="flex flex-col items-center justify-center p-6 bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-transparent hover:border-rad-300 hover:shadow-2xl transition-all active:scale-95 text-center group min-h-[160px]"
+          >
+            <div className={`p-4 rounded-2xl mb-4 ${item.color} group-hover:rotate-6 transition-transform`}>
+              {item.icon}
             </div>
-          )}
+            <span className="font-black text-slate-800 text-[10px] uppercase tracking-widest leading-tight">{item.label}</span>
+          </button>
+        ))}
+      </div>
 
-          {/* Info Zone */}
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">App Info</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <button onClick={() => onNavigate('downloads')} className="p-4 bg-slate-50 rounded-xl border border-gray-200 hover:bg-white text-center">
-                  <Download size={24} className="mx-auto mb-2 text-slate-500" />
-                  <span className="font-medium text-slate-600 text-xs">Downloads</span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-8">
+          <div className="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-xl relative overflow-hidden h-full">
+             <div className="absolute top-0 right-0 p-10 opacity-[0.03]">
+                <Activity size={180} />
+             </div>
+             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-8">
+               {isPublic ? 'Awareness & Safety' : 'Professional Resources'}
+             </h3>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onClick={() => onNavigate('awareness')} className="p-6 bg-teal-50 rounded-3xl border border-teal-100 hover:bg-white text-center flex flex-col items-center gap-3 group transition-all">
+                  <Languages size={24} className="text-teal-400 group-hover:text-teal-600 transition-colors" />
+                  <span className="font-black text-[9px] text-slate-500 uppercase tracking-widest">Multi-Lingual Myths</span>
                 </button>
-                <button onClick={() => onNavigate('guide')} className="p-4 bg-slate-50 rounded-xl border border-gray-200 hover:bg-white text-center">
-                  <Info size={24} className="mx-auto mb-2 text-slate-500" />
-                  <span className="font-medium text-slate-600 text-xs">User Manual</span>
+                <button onClick={() => onNavigate('geo-map')} className="p-6 bg-indigo-50 rounded-3xl border border-indigo-100 hover:bg-white text-center flex flex-col items-center gap-3 group transition-all">
+                  <Radar size={24} className="text-indigo-400 group-hover:text-indigo-600 transition-colors" />
+                  <span className="font-black text-[9px] text-slate-500 uppercase tracking-widest">Mapping Assistant</span>
                 </button>
-                <button onClick={() => onNavigate('about')} className="col-span-2 p-4 bg-slate-50 rounded-xl border border-gray-200 hover:bg-white text-center flex items-center justify-center gap-2">
-                  <Users size={20} className="text-slate-500" />
-                  <span className="font-medium text-slate-600 text-xs">About Team & Project</span>
+                <button onClick={() => onNavigate('sensor-lab')} className="p-6 bg-pink-50 rounded-3xl border border-pink-100 hover:bg-white text-center flex flex-col items-center gap-3 group transition-all">
+                  <Smartphone size={24} className="text-pink-400 group-hover:text-pink-600 transition-colors" />
+                  <span className="font-black text-[9px] text-slate-500 uppercase tracking-widest">Sensor Lab</span>
                 </button>
-            </div>
+             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Admin Monitor OR AI Promo */}
-        <div className="md:col-span-1">
-          {role === 'admin' ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-4 h-full">
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
-                <Activity className="text-red-600" />
-                <h3 className="font-bold text-slate-800">System Logs</h3>
-              </div>
-              
-              <div className="space-y-4 max-h-[600px] overflow-y-auto">
-                {logs.length === 0 && <p className="text-sm text-slate-400 text-center mt-10">No activity recorded yet.</p>}
-                {logs.map(log => (
-                   <div key={log.id} className="p-3 bg-slate-50 rounded-lg border border-gray-100 text-xs">
-                     <div className="flex justify-between items-start mb-1">
-                       <span className={`font-bold ${log.action === 'LOGIN' ? 'text-green-600' : log.action === 'LOGOUT' ? 'text-orange-500' : 'text-blue-600'}`}>
-                         {log.action}
-                       </span>
-                       <span className="text-slate-400">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                     </div>
-                     <p className="font-medium text-slate-700">{log.userName}</p>
-                     <p className="text-slate-400 truncate">{log.email}</p>
-                     <div className="mt-2 pt-2 border-t border-gray-200 flex gap-2 text-[10px] text-slate-400">
-                       {log.device?.includes('Mobile') ? <Smartphone size={10}/> : <Monitor size={10}/>}
-                       <span className="truncate max-w-[150px]">{log.device}</span>
-                     </div>
-                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-             <div className="bg-gradient-to-b from-rad-500 to-purple-600 rounded-2xl p-6 text-white h-full flex flex-col items-center justify-center text-center">
-                <BrainCircuit size={64} className="mb-4 text-white/80" />
-                <h3 className="font-bold text-xl mb-2">AI Assistant Active</h3>
-                <p className="text-sm text-rad-100 mb-6">Your Google Account enables advanced AI features.</p>
-                <div className="bg-white/10 rounded-xl p-4 w-full text-left space-y-2">
-                   <div className="flex items-center gap-2 text-xs font-medium">
-                      <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                      Database Connected
-                   </div>
-                   <div className="flex items-center gap-2 text-xs font-medium">
-                      <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                      Gemini AI Ready
-                   </div>
-                </div>
-             </div>
-          )}
+        <div className="lg:col-span-4">
+          <div className="bg-slate-900 rounded-[3.5rem] p-10 text-white shadow-2xl relative overflow-hidden group border-4 border-slate-800 h-full flex flex-col">
+            <Sparkles className="absolute -top-10 -right-10 w-40 h-40 opacity-10 group-hover:rotate-45 transition-transform duration-1000" />
+            <h3 className="font-black text-lg mb-6 flex items-center gap-3">
+              <BrainCircuit className="text-rad-400" /> Dr. Rad AI
+            </h3>
+            <p className="text-xs text-slate-400 font-bold leading-relaxed">
+              {isPublic 
+                ? "Have concerns about your scan or curious about a myth? Our AI assistant is here to help you feel calm and informed in simple, friendly terms."
+                : "Professional grade AI tutoring for all academic modules. Get instant clarifications on physics, safety limits, and patient positioning."}
+            </p>
+          </div>
         </div>
       </div>
     </div>

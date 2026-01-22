@@ -1,5 +1,9 @@
 {
   "name": "RAD SAFE PRO",
-  "description": "A comprehensive educational platform for Allied Health Science Radiology students featuring learning modules, safety protocols, dose calculators, and AI-assisted learning.",
-  "requestFramePermissions": []
+  "description": "A world-class educational platform for Radiology students featuring AI tutors, dose calculators, and spatial radiation mapping.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
 }

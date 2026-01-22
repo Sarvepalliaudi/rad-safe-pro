@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { 
-  BookOpen, Atom, Ruler, ShieldAlert, Scan, FlaskConical, Move, BrainCircuit, Calculator, HelpCircle, X, Eye, HeartHandshake, LogOut
+  BookOpen, Atom, Ruler, ShieldAlert, Scan, FlaskConical, Move, BrainCircuit, Calculator, HelpCircle, X, Eye, HeartHandshake, LogOut, Smartphone, Globe, Info, Award
 } from 'lucide-react';
 import { Section, UserRole } from '../types';
 import { getUserProfile } from '../services/userService';
@@ -17,13 +16,11 @@ interface SidebarProps {
 }
 
 const iconMap: Record<string, React.ReactNode> = {
-  BookOpen: <BookOpen size={18} />,
   Atom: <Atom size={18} />,
-  Ruler: <Ruler size={18} />,
   ShieldAlert: <ShieldAlert size={18} />,
   Scan: <Scan size={18} />,
-  FlaskConical: <FlaskConical size={18} />,
   Move: <Move size={18} />,
+  Eye: <Eye size={18} />,
   HeartHandshake: <HeartHandshake size={18} />,
 };
 
@@ -44,20 +41,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, activeSection, onSelectSect
   };
 
   const filteredSections = sections.filter(s => {
-    // Admin sees everything
     if (role === 'admin') return true;
-
-    // Public/Patients only see Public Awareness
     if (role === 'patient' || role === 'public') return s.category === 'public';
-    
-    // Radiology Officers see everything except maybe basic positioning (tech work), similar to previous Officer role
-    // But they might want reference, so we'll keep it open or restricted based on preference. 
-    // Previous logic: hidden 'positioning' for officers.
-    if (role === 'radiology_officer') {
-       return s.id !== 'positioning'; 
-    }
-    
-    // Students see everything
     return true;
   });
 
@@ -71,11 +56,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, activeSection, onSelectSect
       <div className={`fixed top-0 left-0 h-full bg-slate-850 text-white w-64 z-30 transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-slate-700 flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-rad-400 to-rad-200 bg-clip-text text-transparent">RAD SAFE PRO</h1>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-rad-400 to-rad-200 bg-clip-text text-transparent uppercase tracking-tighter">RAD SAFE PRO</h1>
             <div className="flex items-center gap-1 mt-1">
-              <span className={`w-2 h-2 rounded-full ${role === 'student' ? 'bg-green-400' : role === 'admin' ? 'bg-red-500' : role === 'radiology_officer' ? 'bg-blue-400' : 'bg-orange-400'}`}></span>
-              <p className="text-xs text-slate-400 capitalize">{role.replace('_', ' ')} Mode</p>
-              {isPro && <span className="ml-1 px-1 bg-yellow-500 text-black text-[9px] font-bold rounded">PRO</span>}
+              <span className={`w-2 h-2 rounded-full bg-green-400`}></span>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{role.replace('_', ' ')} Mode</p>
             </div>
           </div>
           <button onClick={toggleSidebar} className="md:hidden text-slate-400 hover:text-white">
@@ -85,74 +69,56 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, activeSection, onSelectSect
 
         <nav className="p-4 overflow-y-auto h-[calc(100%-80px)] flex flex-col justify-between">
           <div className="space-y-6">
-            {filteredSections.length > 0 && (
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">Learning Modules</p>
-                <ul className="space-y-1">
-                  {filteredSections.map((section) => (
-                    <li key={section.id}>
-                      <button
-                        onClick={() => {
-                          onSelectSection(section.id);
-                          if (window.innerWidth < 768) toggleSidebar();
-                        }}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                          activeSection === section.id 
-                            ? section.category === 'public' ? 'bg-teal-600 text-white' : 'bg-rad-600 text-white' 
-                            : 'text-slate-300 hover:bg-slate-700'
-                        }`}
-                      >
-                        <span className={activeSection === section.id ? 'text-white' : 'text-rad-400'}>
-                          {iconMap[section.icon] || <BookOpen size={18} />}
-                        </span>
-                        {section.title}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Academic Curriculum</p>
+              <ul className="space-y-1">
+                {filteredSections.map((section) => (
+                  <li key={section.id}>
+                    <button
+                      onClick={() => {
+                        onSelectSection(section.id);
+                        if (window.innerWidth < 768) toggleSidebar();
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        activeSection === section.id 
+                          ? 'bg-rad-600 text-white shadow-lg' 
+                          : 'text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      <span className={activeSection === section.id ? 'text-white' : 'text-rad-400'}>
+                        {iconMap[section.icon] || <BookOpen size={18} />}
+                      </span>
+                      {section.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">Tools</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Tools & Lab</p>
               <ul className="space-y-1">
-                 {/* Calculator: Students, Officers, Admins */}
-                 {(role === 'student' || role === 'radiology_officer' || role === 'admin') && (
-                   <li>
-                      <button onClick={() => onSelectSection('calculator')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
-                        <Calculator size={18} className="text-emerald-400" /> Dose Calculator
-                      </button>
-                   </li>
-                 )}
-                 
-                 {/* AI Assistant: Available to everyone */}
                  <li>
-                    <button onClick={() => onSelectSection('ai-predict')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
-                      <BrainCircuit size={18} className="text-purple-400" /> AI Assistant
+                    <button onClick={() => onSelectSection('calculator')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSection === 'calculator' ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-700'}`}>
+                      <Calculator size={18} className={activeSection === 'calculator' ? 'text-white' : 'text-emerald-400'} /> Dose Calculator
                     </button>
                  </li>
-
-                 {/* Learning Tools: Students Only */}
-                 {(role === 'student') && (
-                   <>
-                    <li>
-                        <button onClick={() => onSelectSection('spotters')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
-                          <Eye size={18} className="text-yellow-400" /> Anatomy Spotters
-                        </button>
-                    </li>
-                    <li>
-                        <button onClick={() => onSelectSection('quiz')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700">
-                          <HelpCircle size={18} className="text-orange-400" /> Quiz Bank
-                        </button>
-                    </li>
-                   </>
-                 )}
+                 <li>
+                    <button onClick={() => onSelectSection('sensor-lab')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSection === 'sensor-lab' ? 'bg-red-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-700'}`}>
+                      <Smartphone size={18} className={activeSection === 'sensor-lab' ? 'text-white' : 'text-red-400'} /> Sensor Lab
+                    </button>
+                 </li>
+                 <li>
+                    <button onClick={() => onSelectSection('quiz')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSection === 'quiz' ? 'bg-orange-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-700'}`}>
+                      <HelpCircle size={18} className={activeSection === 'quiz' ? 'text-white' : 'text-orange-400'} /> Quiz Bank
+                    </button>
+                 </li>
               </ul>
             </div>
           </div>
 
           <div className="pt-4 border-t border-slate-700 mt-4">
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition-colors">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:bg-slate-700 hover:text-red-300 transition-colors">
               <LogOut size={18} /> Sign Out
             </button>
           </div>
